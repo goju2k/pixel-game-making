@@ -1,9 +1,10 @@
 import './App.css';
+import { GamePlayView } from './components/views/game/GamePlayView';
 
 function App() {
   return (
     <div className="App">
-      under construction / migration deploy test
+      <GamePlayView></GamePlayView>
     </div>
   );
 }
