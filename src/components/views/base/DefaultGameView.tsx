@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react"
 
-//프레임 Draw 모드 (화면 주사율과 동기/비동기)
-type GAME_DRAW_MODE = 'sync'|'async'
-
 export interface CanvasContextObject{
   context:CanvasRenderingContext2D
   width:number, height:number
@@ -12,7 +9,7 @@ export interface CanvasContextObject{
 type CANVAS_CONTEXT_CHANGED_CALLBACK = (context:CanvasContextObject)=>void
 
 //게임의 기본 view 를 구성하는 컴포넌트
-interface GameViewProps{
+export interface GameViewProps{
 
   //게임 디자인 해상도
   gameWidth? : number
@@ -27,10 +24,6 @@ interface GameViewProps{
 
   //full screen 여부
   fullScreen? : boolean
-
-  //프레임레이트
-  drawMode? : GAME_DRAW_MODE
-  drawFps? : number
 
   //이벤트
   onContextChanged? : CANVAS_CONTEXT_CHANGED_CALLBACK
@@ -79,8 +72,6 @@ export function DefaultGameView({
   displayHeight = gameHeight,
   fixedRatio = false,
   fullScreen = true,
-  drawMode = 'sync',
-  drawFps = 999,
   onContextChanged,
   debug = false
 }:GameViewProps){

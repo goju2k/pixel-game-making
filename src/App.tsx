@@ -1,12 +1,12 @@
-import './App.css';
-import { GamePlayView } from './components/views/game/GamePlayView';
+import './App.css'
+import { RogueLiteGame } from './games/roguelite/RogueLiteGame'
 
 function App() {
   return (
     <div className="App">
-      <GamePlayView></GamePlayView>
+      <RogueLiteGame/>
     </div>
-  );
+  )
 }
 
 export default App;
