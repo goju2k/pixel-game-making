@@ -1,11 +1,12 @@
-import './App.css';
+import './App.css'
+import { RogueLiteGame } from './games/roguelite/RogueLiteGame'
 
 function App() {
   return (
     <div className="App">
-      under construction
+      <RogueLiteGame/>
     </div>
-  );
+  )
 }
 
 export default App;
