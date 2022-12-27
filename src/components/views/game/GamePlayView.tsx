@@ -1,16 +1,17 @@
 import { useCallback, useRef } from "react";
-import { CanvasContextObject, DefaultGameView } from "../base/DefaultGameView";
+import { CanvasContextObject, DefaultGameView, GameViewProps } from "../base/DefaultGameView";
 
-interface GamePlayViewProps{
+export interface GamePlayViewProps extends GameViewProps{
 
 }
-export function GamePlayView({}:GamePlayViewProps){
+
+export function GamePlayView({children, ...props}:React.PropsWithChildren<GamePlayViewProps>){
 
   const contextRef = useRef<CanvasRenderingContext2D|null>(null)
 
   const onContextChanged = useCallback(function({context, width, height}:CanvasContextObject){
     
-    console.log('onContextChanged');
+    console.log('onContextChanged')
     contextRef.current = context
 
     context.fillStyle = 'lightgreen'
@@ -19,5 +20,10 @@ export function GamePlayView({}:GamePlayViewProps){
 
   }, [])
   
-  return <DefaultGameView onContextChanged={onContextChanged}></DefaultGameView>
+  return <>
+    <div style={{position:'absolute', zIndex:1, width:'100%', height:'100%'}}>
+      {children}
+    </div>
+    <DefaultGameView {...props} onContextChanged={onContextChanged}></DefaultGameView>
+  </>
 }

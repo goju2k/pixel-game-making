@@ -1,0 +1,44 @@
+.ani-text-writing{
+  animation: text-writing 2s linear;
+  stroke: #00baff;
+  fill: white;
+  stroke-dasharray: 335;
+  stroke-dashoffset: 0;
+}
+
+@keyframes text-writing {
+  0% {
+    stroke-dashoffset: 335;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.ani-text-fadein{
+  animation: text-fadein 1s linear;
+  fill: #00baff;
+}
+
+@keyframes text-fadein {
+  0% {
+    fill-opacity: 0;
+  }
+  100% {
+    fill-opacity: 1;
+  }
+}
+
+.ani-fadeout{
+  animation: fadeout 1s linear;
+  opacity: 0;
+}
+
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
