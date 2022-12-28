@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { DRAW_FUNCTION, GameLoopConfig, GameLoopModule } from "../../../modules/gameloop/loop";
+import { DRAW_FUNCTION, GameLoopModule } from "../../../modules/gameloop/loop";
 import { CanvasContextObject, DefaultGameView, GameViewProps } from "../base/DefaultGameView";
+import global from '../../../modules/draw/global'
 
 export type GAME_DRAW_FUNCTION = (context:CanvasContextObject, delta:number)=>void
 export interface GamePlayViewProps {
@@ -22,6 +23,9 @@ export function GamePlayView({
     
     console.log('onContextChanged', contextObject)
     contextRef.current = contextObject
+
+    //global 도 업데이트
+    Object.assign(global, contextObject)
 
   }, [])
 
