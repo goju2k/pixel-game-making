@@ -1,5 +1,5 @@
 import './App.css'
-import { RogueLiteGame } from './games/roguelite/RogueLiteGame'
+import { RogueLiteGame } from './games/roguelite/RogueLiteGame';
 
 function App() {
   return (
