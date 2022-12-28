@@ -1,29 +1,53 @@
-import { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { DRAW_FUNCTION, GameLoopConfig, GameLoopModule } from "../../../modules/gameloop/loop";
 import { CanvasContextObject, DefaultGameView, GameViewProps } from "../base/DefaultGameView";
 
-export interface GamePlayViewProps extends GameViewProps{
-
+export type GAME_DRAW_FUNCTION = (context:CanvasContextObject, delta:number)=>void
+export interface GamePlayViewProps {
+  gameDraw?:GAME_DRAW_FUNCTION
+  gameViewProps?:GameViewProps
 }
 
-export function GamePlayView({children, ...props}:React.PropsWithChildren<GamePlayViewProps>){
+export function GamePlayView({
+  gameDraw,      //Game Draw
+  gameViewProps = {}, //Game View Props
+  children,      //UI elements
+}:React.PropsWithChildren<GamePlayViewProps>){
 
-  const contextRef = useRef<CanvasRenderingContext2D|null>(null)
+  //draw context
+  const contextRef = useRef<CanvasContextObject|null>(null)
 
-  const onContextChanged = useCallback(function({context, width, height}:CanvasContextObject){
+  //context changed callback
+  const onContextChanged = useCallback(function(contextObject:CanvasContextObject){
     
-    console.log('onContextChanged')
-    contextRef.current = context
-
-    context.fillStyle = 'lightgreen'
-    context.clearRect(0, 0, width, height)
-    context.fillRect(0, 0, width, height)
+    console.log('onContextChanged', contextObject)
+    contextRef.current = contextObject
 
   }, [])
+
+  //view draw
+  const draw = useCallback<DRAW_FUNCTION>((time)=>{
+    contextRef.current && gameDraw && gameDraw(contextRef.current, time)
+  }, [])
+
+  //게임 루프
+  const loopRef = useRef<GameLoopModule>(new GameLoopModule({draw:gameDraw?draw:undefined}))
+
+  useEffect(()=>{
+    if(gameDraw){
+      loopRef.current.start() //start
+      console.log('GamePlayView loop start')
+    }
+    return ()=>{
+      loopRef.current.stop()
+    }
+  }, [])
+  
   
   return <>
     <div style={{position:'absolute', zIndex:1, width:'100%', height:'100%'}}>
       {children}
     </div>
-    <DefaultGameView {...props} onContextChanged={onContextChanged}></DefaultGameView>
+    {gameDraw && <DefaultGameView {...gameViewProps} onContextChanged={onContextChanged}></DefaultGameView>}
   </>
 }

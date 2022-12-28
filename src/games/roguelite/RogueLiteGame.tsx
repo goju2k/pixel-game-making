@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { GameManager } from "../../components/manager/game/GameManager";
-import { GamePlayView } from "../../components/views/game/GamePlayView";
+import { LogoView } from "./views/logo/LogoView";
+import { MainView } from "./views/main/MainView";
 import './RogueLiteGame.scss'
-import { LogoView } from "./views/LogoView";
 
 export function RogueLiteGame(){
 
@@ -20,8 +20,10 @@ export function RogueLiteGame(){
 
   return <>
     <GameManager currViewIdx={currViewIdx} views={[
+      //게임 로고
       <LogoView key='logo-view' onEnd={onLogoEnds} />,
-      <GamePlayView key='main-view' />,
+      //게임 메인
+      <MainView key='main-view' />,
     ]}/>
   </>
 }

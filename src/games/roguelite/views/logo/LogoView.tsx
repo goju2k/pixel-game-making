@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { GamePlayView } from "../../../components/views/game/GamePlayView"
+import { GamePlayView } from "../../../../components/views/game/GamePlayView"
 
 export function LogoView({onEnd}:{onEnd?:()=>void}){
 
