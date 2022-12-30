@@ -48,8 +48,8 @@ export class Canvas2dApi implements GameRenderingContext {
       sy, 
       sWidth, 
       sHeight, 
-      flipX===-1?flipX * Math.floor(dx) - dWidth : Math.floor(dx),
-      flipY===-1?flipY * Math.floor(dy) - dHeight : Math.floor(dy),
+      flipX===-1?flipX * dx - dWidth : dx,
+      flipY===-1?flipY * dy - dHeight : dy,
       dWidth, 
       dHeight
     )
