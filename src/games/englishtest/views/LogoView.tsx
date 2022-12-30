@@ -29,7 +29,7 @@ export function LogoView({onEnd}:{onEnd?:()=>void}){
 
       <svg  width='100%' height='100%'>
         <text ref={logoRef} className="ani-text-writing" textAnchor="middle" x="50%" y="50%" fill="blue" fontSize='80px' fontWeight='700'>
-          N.A. STUDIO
+          YUNA STUDIO
         </text>
       </svg>
 
