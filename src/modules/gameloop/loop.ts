@@ -1,31 +1,34 @@
 
 //프레임 Draw 모드 (화면 주사율과 동기/비동기)
-type GAME_DRAW_MODE = 'sync'|'async'
+export type GAME_DRAW_MODE = 'sync'|'async'
 
 //draw function
-type DRAW_FUNCTION = (delta:number)=>void
+export type DRAW_FUNCTION = (delta:number)=>void
 
-interface GameLoopConfig {
+export interface GameLoopConfig {
   
   //프레임레이트
   drawMode? : GAME_DRAW_MODE
   drawFps? : number
 
   //draw
-  draw : DRAW_FUNCTION
+  draw? : DRAW_FUNCTION
 
   //debug
   debug? : boolean
 
 }
 
-export class GameLoopManager {
+export class GameLoopModule {
   
   //config
-  draw!:DRAW_FUNCTION
-  drawMode!:GAME_DRAW_MODE
+  draw?:DRAW_FUNCTION
+  drawMode?:GAME_DRAW_MODE
   drawFps?:number
   debug?:boolean
+
+  //debugger
+  debugger:number = 0
 
   constructor({draw, drawMode = 'sync', drawFps = 999, debug = false}:GameLoopConfig){
     this.setConfig({draw, drawMode, drawFps, debug})
@@ -47,8 +50,11 @@ export class GameLoopManager {
 
   start(){
     if(!this.drawId){
-      this.drawId = window.requestAnimationFrame(this.loop);
+      this.drawId = window.requestAnimationFrame(this.loop.bind(this));
     }
+    this.debug && (this.debugger = window.setInterval(()=>{
+      console.log('fps:',this.fps)
+    }, 1000))
   }
 
   stop(){
@@ -69,6 +75,8 @@ export class GameLoopManager {
 
     }
 
+    window.clearInterval(this.debugger)
+
   }
 
   //fps value
@@ -85,12 +93,12 @@ export class GameLoopManager {
 
   //constants (for loop)
   private readonly NUM_0 = 0
-  private readonly NUM_1 = 0
+  private readonly NUM_1 = 1
   private readonly SEC_1 = 1000
   private loop(time:number){
 
     //request
-    this.drawId = window.requestAnimationFrame(this.loop)
+    this.drawId = window.requestAnimationFrame(this.loop.bind(this))
 
     //frame 체크
     if(!this.frameCheck(time)) {
@@ -98,7 +106,7 @@ export class GameLoopManager {
     }
 
     //draw
-    this.draw(this.drawNextGapTime)
+    this.draw && this.draw(this.drawNextGapTime)
 
     //FPS 처리
     this.calcFps(time);
