@@ -8,19 +8,19 @@ export function MainView(){
 
   //scene 생성
   const sceneRef = useRef<SceneBase>(new OpeningScene({
-    worlds:[new OpeningWorld({
-      tileSize:32,
-      numberOfTiles:[100, 100]
-    }).init()]
+    worlds:[new OpeningWorld().init()]
   }).init())
 
   //draw 구성
-  const gameDraw = useCallback<GAME_DRAW_FUNCTION>(({context, width, height}, time)=>{
+  const gameDraw = useCallback<GAME_DRAW_FUNCTION>((time)=>{
     
-    sceneRef.current.step()
+    sceneRef.current.step(time)
     sceneRef.current.draw()
 
   }, [])
 
-  return <GamePlayView gameDraw={gameDraw} />
+  return <GamePlayView gameDraw={gameDraw} gameViewProps={{
+    gameWidth:480,
+    gameHeight:270
+  }} />
 }

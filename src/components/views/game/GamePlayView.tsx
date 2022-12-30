@@ -2,8 +2,10 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { DRAW_FUNCTION, GameLoopModule } from "../../../modules/gameloop/loop";
 import { CanvasContextObject, DefaultGameView, GameViewProps } from "../base/DefaultGameView";
 import global from '../../../modules/draw/global'
+import { createRenderingContext } from "../../../modules/draw/apis";
 
-export type GAME_DRAW_FUNCTION = (context:CanvasContextObject, delta:number)=>void
+export type GAME_DRAW_FUNCTION = (delta:number)=>void
+
 export interface GamePlayViewProps {
   gameDraw?:GAME_DRAW_FUNCTION
   gameViewProps?:GameViewProps
@@ -15,23 +17,22 @@ export function GamePlayView({
   children,      //UI elements
 }:React.PropsWithChildren<GamePlayViewProps>){
 
-  //draw context
-  const contextRef = useRef<CanvasContextObject|null>(null)
-
   //context changed callback
   const onContextChanged = useCallback(function(contextObject:CanvasContextObject){
     
     console.log('onContextChanged', contextObject)
-    contextRef.current = contextObject
-
-    //global 도 업데이트
-    Object.assign(global, contextObject)
-
+    
+    //global renderContext 생성/업데이트
+    if(!global.renderContext){
+      global.renderContext = createRenderingContext(contextObject.renderContext)
+    }
+    
   }, [])
 
   //view draw
   const draw = useCallback<DRAW_FUNCTION>((time)=>{
-    contextRef.current && gameDraw && gameDraw(contextRef.current, time)
+    global.renderContext?.clear2d()
+    gameDraw && gameDraw(time)
   }, [])
 
   //게임 루프

@@ -49,6 +49,7 @@ export class Sprite {
   xcnt:number=0
   ycnt:number=0
   frames:FrameOffset[][]=[]
+  framesNo:FrameOffset[]=[{offsetX:0,offsetY:0}] //index 1부터 채우기 위해...
   constructor(imageSrc:string, frameWidth?:number, frameHeight?:number, scale?:number){
     
     this.imageSrc = imageSrc
@@ -58,44 +59,46 @@ export class Sprite {
 
   }
 
-  draw(x:number, y:number, frameX:number, frameY:number, rotate?:number){
+  drawNo(x:number, y:number, no:number, flipX?:1|-1){
 
-    if(!this.imageLoaded) return
-    
-    if(!g.context) return
+    //프레임 존재 체크
+    if(!this.framesNo[no]){
+        throw new Error('이미지의 프레임 No. ('+no+') 이 존재하지 않습니다.  No Range => ( 0 ~ '+this.framesNo.length+' )')
+    }
+
+    this.drawMain(x, y, this.framesNo[no], flipX)
+
+  }
+
+  draw(x:number, y:number, frameX:number, frameY:number, flipX?:1|-1){
 
     //프레임 존재 체크
     if(!this.frames[frameX] || !this.frames[frameX][frameY]){
         throw new Error('이미지의 프레임 ('+frameX+','+frameY+') 이 존재하지 않습니다.  최대좌표 => ('+this.xcnt+','+this.ycnt+')')
     }
 
-    //디버그용 박스
-    // ctx.strokeStyle = 'green';
-    // ctx.strokeRect(Math.floor(x), Math.floor(y), this.scaleWidth, this.scaleHeight);
+    this.drawMain(x, y, this.frames[frameX][frameY], flipX)
 
-    //rotate 처리
-    if(rotate !== undefined){
-      g.context.save()
-      g.context.scale(rotate, 1) //rotate 가 -1 이면 대칭
-    }else{
-        rotate = 1
-    }
+  }
 
-    //이미지 그리기
-    g.context.drawImage(
-        this.image, 
-        this.frames[frameX][frameY].offsetX, 
-        this.frames[frameX][frameY].offsetY, 
-        this.frameWidth, 
-        this.frameWidth, 
-        rotate!=1?rotate*Math.floor(x) - this.scaleWidth:Math.floor(x), 
-        Math.floor(y), 
-        this.scaleWidth, 
-        this.scaleHeight
-    );
+  private drawMain(x:number, y:number, offset:FrameOffset, flipX?:1|-1){
+    
+    if(!this.imageLoaded) return
+    
+    if(!g.renderContext) return
 
-    //rotate 복귀
-    if(rotate !== undefined) g.context.restore();
+    g.renderContext.drawImage2d(
+      this.image, 
+      offset.offsetX, 
+      offset.offsetY, 
+      this.frameWidth, 
+      this.frameWidth, 
+      x,
+      y,
+      this.scaleWidth, 
+      this.scaleHeight,
+      flipX
+    )
 
   }
 
@@ -126,13 +129,14 @@ export class Sprite {
         //프레임 정보 생성
         const xcnt = this.xcnt = this.image.width / this.frameWidth
         const ycnt = this.ycnt = this.image.height / this.frameHeight
-        for(let i = 0 ; i < xcnt ; i++){
+        for(let i = 0 ; i < ycnt ; i++){
   
             if(!this.frames[i]){
                 this.frames[i] = []
             }
-            for(let k = 0 ; k < ycnt ; k++){
-                this.frames[i][k] = {offsetX:i * this.frameWidth, offsetY:k * this.frameHeight} as FrameOffset
+            for(let k = 0 ; k < xcnt ; k++){
+                this.frames[i][k] = {offsetX:k * this.frameHeight, offsetY:i * this.frameWidth} as FrameOffset
+                this.framesNo.push(this.frames[i][k])
             }
   
         }

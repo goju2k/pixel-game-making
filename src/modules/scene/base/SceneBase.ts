@@ -1,6 +1,6 @@
 import { WorldBase } from "./WorldBase";
 
-interface SceneBaseConfig {
+export interface SceneBaseConfig {
   worlds:WorldBase[]
 }
 
@@ -21,7 +21,7 @@ export abstract class SceneBase {
   }
 
   abstract init():this
-  abstract step():void
+  abstract step(time:number):void
   abstract draw():void
   
 }

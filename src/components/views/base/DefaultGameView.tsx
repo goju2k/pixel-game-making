@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 
 export interface CanvasContextObject{
-  context:CanvasRenderingContext2D
+  renderContext:CanvasRenderingContext2D
   width:number, height:number
 }
 
@@ -131,8 +131,29 @@ export function DefaultGameView({
 
     if(canvasRef && canvasRef.current){
       contextRef.current = contextRef.current || canvasRef.current.getContext('2d')
+
+      const ctx = contextRef.current
+      if(!ctx) return
+
+      //스케일 계산
+      const scaleRatioX = window.screen.width / gameWidth
+      const scaleRatioY = window.screen.height / gameHeight
+      let scale = scaleRatioX > scaleRatioY?scaleRatioY:scaleRatioX
+      
+      const angle = window.screen.orientation.angle
+      if(window.screen.width < window.screen.height && angle === 0){
+        
+        alert('세로모드는 지원하지 않습니다.')
+        throw new Error('세로모드는 지원하지 않습니다.')
+      }
+
+      ctx.scale(scale, scale)
+      
+      //image scale option
+      ctx.imageSmoothingEnabled = false;
+
       if(contextRef.current){
-        onContextChanged && onContextChanged({context:contextRef.current, width:canvasWidth, height:canvasHeight})
+        onContextChanged && onContextChanged({renderContext:contextRef.current, width:canvasWidth, height:canvasHeight})
       }else{
         throw new Error('Canvas 2d is not Supported.')
       }
