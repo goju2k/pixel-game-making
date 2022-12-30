@@ -1,3 +1,4 @@
+import { Camera } from "../camera/Camera";
 import { GameRenderingContext } from "./apis";
 
 class KeyContext {
@@ -25,6 +26,7 @@ class GlobalContext {
   keyContext: KeyContext = new KeyContext()
   width?: number
   height?: number
+  camera: Camera = new Camera({})
 }
 
 const context = new GlobalContext()

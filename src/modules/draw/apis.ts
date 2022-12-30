@@ -4,10 +4,17 @@ type ImageSource = CanvasImageSource | TexImageSource
 type FlipType = 1|-1
 
 export interface GameRenderingContext {
+
   ctx:CanvasRenderingContext2D|WebGL2RenderingContext
+
+  translatedX:number
+  translatedY:number
+
   clear2d:()=>void
   drawImage2d:(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number)=>void
   translate2d:(x:number, y:number)=>void
+  canvasResized:()=>void
+
 }
 
 export class Canvas2dApi implements GameRenderingContext {
@@ -20,10 +27,10 @@ export class Canvas2dApi implements GameRenderingContext {
   constructor(ctx: CanvasRenderingContext2D){
     this.ctx = ctx
   }
-
+  
   clear2d(){
     this.ctx.fillStyle = 'black'
-    this.ctx.fillRect(this.translatedX, this.translatedY, this.ctx.canvas.width + this.translatedX, this.ctx.canvas.height + this.translatedY)
+    this.ctx.fillRect(this.translatedX * -1, this.translatedY * -1, this.ctx.canvas.width + this.translatedX, this.ctx.canvas.height + this.translatedY)
   }
 
   drawImage2d(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number){
@@ -61,6 +68,11 @@ export class Canvas2dApi implements GameRenderingContext {
     this.translatedX += x
     this.translatedY += y
     this.ctx.translate(x, y)
+  }
+
+  canvasResized(){
+    this.translatedX = 0
+    this.translatedY = 0
   }
 
 }

@@ -14,6 +14,9 @@ export abstract class ObjectBase {
   drawX:number = 0
   drawY:number = 0
 
+  prevX:number = 0
+  prevY:number = 0
+
   //크기
   width:number = 0
   height:number = 0
@@ -27,6 +30,8 @@ export abstract class ObjectBase {
   }
   
   //기본 drawbles function
+  abstract init():void
+  abstract update():void
   abstract step(time:number):void
   abstract draw():void
 
@@ -44,10 +49,12 @@ export abstract class ObjectBase {
   //x, y 를 설정하고 draw 좌표를 계산한다. (anchor 가 center bottom 기준)
   setPosition(x?:number, y?:number){
     if(x){
+      this.prevX = this.x
       this.x = x
       this.drawX = this.x - this.widthHalf
     }
     if(y){
+      this.prevY = this.y
       this.y = y
       this.drawY = this.y - this.height
     }

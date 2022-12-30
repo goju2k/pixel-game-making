@@ -4,27 +4,49 @@ import { CanvasContextObject, DefaultGameView, GameViewProps } from "../base/Def
 import global from '../../../modules/draw/global'
 import { createRenderingContext } from "../../../modules/draw/apis";
 
+export type GAME_DRAW_READY_FUNCTION = ()=>void
+export type GAME_CONTEXT_UPDATE_FUNCTION = ()=>void
 export type GAME_DRAW_FUNCTION = (delta:number)=>void
 
 export interface GamePlayViewProps {
+  onReady?:GAME_DRAW_READY_FUNCTION
+  onContextUpdate?:GAME_CONTEXT_UPDATE_FUNCTION
   gameDraw?:GAME_DRAW_FUNCTION
   gameViewProps?:GameViewProps
 }
 
 export function GamePlayView({
+  onReady,       //Draw Ready
+  onContextUpdate, //Context Update
   gameDraw,      //Game Draw
   gameViewProps = {}, //Game View Props
   children,      //UI elements
 }:React.PropsWithChildren<GamePlayViewProps>){
 
+  //ready
+  const ready = useRef<boolean>(false)
+
   //context changed callback
   const onContextChanged = useCallback(function(contextObject:CanvasContextObject){
     
     console.log('onContextChanged', contextObject)
-    
+
     //global renderContext 생성/업데이트
     if(!global.renderContext){
       global.renderContext = createRenderingContext(contextObject.renderContext)
+    }else{
+      global.renderContext.canvasResized()
+      global.camera.init()
+    }
+    
+    global.width = contextObject.scaledWidth
+    global.height = contextObject.scaledHeight
+
+    if(!ready.current){
+      ready.current = true
+      onReady && onReady()
+    }else{
+      onContextUpdate && onContextUpdate()
     }
     
   }, [])

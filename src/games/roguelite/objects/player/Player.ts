@@ -23,9 +23,23 @@ export class Player extends ObjectBase {
     Promise.all([this.sprite.load()]).then(()=>{
       this.loaded = true
     })
-    
+
   }
 
+  init(): void {
+    
+    //player 에 카메라 포커스 처리
+    global.camera.focusCameraTo(this, true)
+
+  }
+  
+  update(): void {
+    
+    //player 에 카메라 포커스 처리
+    global.camera.focusCameraTo(this, true)
+    
+  }
+  
   step(time: number){
 
     //플레이어 이동
@@ -62,9 +76,16 @@ export class Player extends ObjectBase {
       }
 
     }else{
+
+      this.setPosition(this.x, this.y)
+
       this.tileNo = 1
       this.nextTime = -1
+
     }
+
+    //player 에 카메라 포커스 처리
+    global.camera.focusCameraTo(this)
 
   }
 

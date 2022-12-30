@@ -21,6 +21,7 @@ export abstract class SceneBase {
   }
 
   abstract init():this
+  abstract update():void
   abstract step(time:number):void
   abstract draw():void
   

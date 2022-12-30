@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react"
 export interface CanvasContextObject{
   renderContext:CanvasRenderingContext2D
   width:number, height:number
+  scaledWidth:number, scaledHeight:number
 }
 
 //컨텍스트 로드 이벤트 콜백
@@ -153,7 +154,11 @@ export function DefaultGameView({
       ctx.imageSmoothingEnabled = false;
 
       if(contextRef.current){
-        onContextChanged && onContextChanged({renderContext:contextRef.current, width:canvasWidth, height:canvasHeight})
+        onContextChanged && onContextChanged({
+          renderContext:contextRef.current,
+          width:canvasWidth, height:canvasHeight,
+          scaledWidth:canvasWidth / scale, scaledHeight:canvasHeight / scale,
+        })
       }else{
         throw new Error('Canvas 2d is not Supported.')
       }

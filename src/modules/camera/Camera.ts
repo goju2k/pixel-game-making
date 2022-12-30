@@ -19,60 +19,43 @@ export class Camera {
   
   x:number = 0
   y:number = 0
+  
   mode:CAMERA_MODE=CAMERA_MODE.FIXED
+
   targetWorld?:WorldBase
   targetObject?:ObjectBase
 
-  translateX:number = 0
-  translateY:number = 0
-
-  
-
-  constructor(config:CameraConfig){
-    Object.assign(this, config)
-    if(this.mode === 'follow' && !this.targetObject){
-      throw new Error('follow모드는 targetObject 를 설정해야 합니다.')
-    }
-    console.log('camera init => ', Object.assign({}, this))
-    this.followCamera()
-  }
-
-  followCamera(){
-    if(this.mode === CAMERA_MODE.FOLLOW && this.targetObject){
-      
-      this.translateX = this.x - this.targetObject.drawX
-      this.x = this.targetObject.drawX
-
-      this.translateY = this.y - this.targetObject.drawY
-      this.y = this.targetObject.drawY
-
-      if(this.x <= 0){
-        this.translateX = 0
-      }
-      if(this.y <= 0){
-        this.translateY = 0
-      }
-      //console.log('followCamera => ', Object.assign({}, this))
-      
-      this.moveCamera()
-    }
-  }
-
-  step(time:number){
-
-    //this.followCamera()
+  constructor(_config:CameraConfig){
     
   }
 
-  private moveCamera(){
+  init(){
+    this.x = 0
+    this.y = 0
+  }
 
-    if((this.translateX !== 0 || this.translateY !== 0) 
-    && context.renderContext
-    ){
-      context.renderContext.translate2d(this.translateX, this.translateY)
-      this.translateX = 0
-      this.translateY = 0
+  focusCameraTo(targetObject:ObjectBase, forceUpdate?:boolean){
+
+    if(!context.renderContext || !context.width || !context.height) return
+
+    if(!forceUpdate && targetObject.prevX === targetObject.x && targetObject.prevY === targetObject.y) return
+    
+    const deltaX = ((context.width / 2) - targetObject.x)
+    const deltaY = ((context.height / 2) - targetObject.y)
+    
+    if(this.x === deltaX && this.y === deltaY){
+      return
     }
+    
+    console.log(this.x , deltaX , this.y , deltaY)
+
+    const tx = deltaX - this.x 
+    const ty = deltaY - this.y
+    
+    this.x = deltaX
+    this.y = deltaY
+
+    context.renderContext.translate2d(tx, ty)
     
   }
 

@@ -1,4 +1,3 @@
-import { Camera, CAMERA_MODE } from "../../../modules/camera/Camera";
 import { SceneBase, SceneBaseConfig } from "../../../modules/scene/base/SceneBase";
 import { Player } from "../objects/player/Player";
 
@@ -7,24 +6,28 @@ interface OpeningSceneConfig extends SceneBaseConfig {
 }
 export class OpeningScene extends SceneBase {
   
-  player:Player = new Player({x:this.world.widthHalf, y:this.world.heightHalf, width:16, height:16})
-  camera:Camera
-
+  player:Player = new Player({x:0, y:0, width:16, height:16})
+  
   constructor(config:OpeningSceneConfig){
 
     super(config)
 
-    this.camera = new Camera({
-      mode:CAMERA_MODE.FOLLOW,
-      targetObject:this.player
-    })
-  
   }
 
   init(){
+
+    this.world.init()
+
+    this.player.setPosition(this.world.widthHalf, this.world.heightHalf)
+    this.player.init()
+
     return this
   }
 
+  update(){
+    this.player.update()
+  }
+  
   step(time:number){
 
     //world
@@ -42,9 +45,6 @@ export class OpeningScene extends SceneBase {
 
     //player
     this.player.draw()
-
-    //camera
-    this.camera.followCamera()
 
   }
 
