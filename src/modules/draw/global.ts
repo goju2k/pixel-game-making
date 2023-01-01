@@ -1,4 +1,5 @@
 import { Camera } from "../camera/Camera";
+import { ObjectBase } from "../object/base/ObjectBase";
 import { GameRenderingContext } from "./apis";
 
 class KeyContext {
@@ -19,11 +20,25 @@ class KeyContext {
   'Period':boolean=false;'Slash':boolean=false;'AltRight':boolean=false;'ControlRight':boolean=false;'Insert':boolean=false;'Delete':boolean=false;'Home':boolean=false;'End':boolean=false;'PageUp':boolean=false;'PageDown':boolean=false;
 }
 
+class ObjectContext {
 
+  list:ObjectBase[]=[]
+  add(object:ObjectBase){
+    !this.list.includes(object) && this.list.push(object)
+    // console.log('added object')
+    
+  }
+  remove(object:ObjectBase){
+    this.list.splice(this.list.indexOf(object), 1)
+    // console.log('remove object')
+  }
+
+}
 
 class GlobalContext {
   renderContext?: GameRenderingContext
   keyContext: KeyContext = new KeyContext()
+  objectContext: ObjectContext = new ObjectContext()
   width?: number
   height?: number
   camera: Camera = new Camera({})
