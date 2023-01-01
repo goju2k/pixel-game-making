@@ -47,7 +47,7 @@ export class Camera {
       return
     }
     
-    console.log(this.x , deltaX , this.y , deltaY)
+    //console.log(this.x , deltaX , this.y , deltaY)
 
     const tx = deltaX - this.x 
     const ty = deltaY - this.y
