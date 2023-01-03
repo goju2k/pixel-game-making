@@ -18,6 +18,10 @@ class KeyContext {
   'Enter':boolean=false;'Tab':boolean=false;'CapsLock':boolean=false;'ShiftLeft':boolean=false;'ControlLeft':boolean=false;'MetaLeft':boolean=false;'AltLeft':boolean=false;'Backquote':boolean=false;'Minus':boolean=false;
   'Equal':boolean=false;'Backspace':boolean=false;'Backslash':boolean=false;'Escape':boolean=false;'BracketLeft':boolean=false;'BracketRight':boolean=false;'Semicolon':boolean=false;'Quote':boolean=false;'Comma':boolean=false;
   'Period':boolean=false;'Slash':boolean=false;'AltRight':boolean=false;'ControlRight':boolean=false;'Insert':boolean=false;'Delete':boolean=false;'Home':boolean=false;'End':boolean=false;'PageUp':boolean=false;'PageDown':boolean=false;
+  //마우스
+  'MouseLeft':boolean=false;'MouseRight':boolean=false;
+  MouseX:number=0;MouseY:number=0;
+  
 }
 
 class ObjectContext {
@@ -54,6 +58,28 @@ window.addEventListener('keydown', (e)=>{
 window.addEventListener('keyup', (e)=>{
   //@ts-ignore
   context.keyContext[e.code] = false
+})
+
+window.addEventListener('mousemove', (e)=>{
+  context.keyContext.MouseX = e.offsetX / (context.renderContext?context.renderContext.getScale():1)
+  context.keyContext.MouseY = e.offsetY / (context.renderContext?context.renderContext.getScale():1)
+})
+
+window.addEventListener('mousedown', (e)=>{
+  if(e.button===0){
+    context.keyContext.MouseLeft = true
+  }else if(e.button===2){
+    context.keyContext.MouseRight = true
+  }
+})
+
+window.addEventListener('mouseup', (e)=>{
+  e.preventDefault()
+  if(e.button===0){
+    context.keyContext.MouseLeft = false
+  }else if(e.button===2){
+    context.keyContext.MouseRight = false
+  }
 })
 
 export default context

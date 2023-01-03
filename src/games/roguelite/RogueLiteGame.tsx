@@ -21,7 +21,7 @@ export function RogueLiteGame(){
   return <>
     <GameManager currViewIdx={currViewIdx} views={[
       //게임 로고
-      <LogoView key='logo-view' onEnd={onLogoEnds} />,
+      // <LogoView key='logo-view' onEnd={onLogoEnds} />,
       //게임 메인
       <MainView key='main-view' />,
     ]}/>

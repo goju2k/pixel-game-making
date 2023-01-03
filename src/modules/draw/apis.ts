@@ -10,6 +10,8 @@ export interface GameRenderingContext {
   translatedX:number
   translatedY:number
 
+  getScale:()=>number
+  setScale:(scale:number)=>void
   clear2d:()=>void
   drawImage2d:(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number)=>void
   translate2d:(x:number, y:number)=>void
@@ -24,8 +26,17 @@ export class Canvas2dApi implements GameRenderingContext {
   translatedX:number=0
   translatedY:number=0
 
+  scale:number = 1
+
   constructor(ctx: CanvasRenderingContext2D){
     this.ctx = ctx
+  }
+
+  getScale(){
+    return this.scale
+  }
+  setScale(scale:number){
+    this.scale = scale
   }
   
   clear2d(){
