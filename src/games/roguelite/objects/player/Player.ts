@@ -16,7 +16,7 @@ export class Player extends ObjectBase {
   rotate:1|-1=1
   nextTime:number = 0
 
-  status:'init'|'run'='init'
+  status:'init'|'run'|'attack'='init'
 
   constructor(config:PlayerConfig){
     
@@ -52,6 +52,32 @@ export class Player extends ObjectBase {
   
   step(time: number){
 
+    //기본 공격
+    if(global.keyContext.MouseLeft){
+
+      //공격 방향 정하기
+      const delta = global.renderContext?this.x + global.renderContext.translatedX - global.keyContext.MouseX:0
+      this.rotate = delta > 0?-1:1
+      
+      //공격 애니메이션
+      if(this.status !== 'attack'){
+        this.nextTime = -1
+        this.tileNo = 21
+        this.status = 'attack'
+      }
+
+      if(this.nextTime === -1){
+        this.nextTime = 0
+        this.tileNo = 21
+        this.nextTime += time
+      }else if(this.nextTime > 50){
+        this.nextTime = 0
+        this.tileNo = this.tileNo===21?22:21
+      }else{
+        this.nextTime += time
+      }
+
+    }else
     //플레이어 이동
     if(global.keyContext.KeyA || global.keyContext.KeyD || global.keyContext.KeyW || global.keyContext.KeyS){
 
@@ -103,6 +129,7 @@ export class Player extends ObjectBase {
         this.status = 'run'
       }
 
+      //달리기
       if(this.nextTime === -1){
         this.tileNo = 11
         this.nextTime += time
@@ -120,6 +147,7 @@ export class Player extends ObjectBase {
 
       this.setPosition(this.x, this.y)
 
+      //베이스
       if(this.status !== 'init'){
         this.nextTime = -1
         this.tileNo = 1

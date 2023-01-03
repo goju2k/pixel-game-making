@@ -34,7 +34,9 @@ export function GamePlayView({
     //global renderContext 생성/업데이트
     if(!global.renderContext){
       global.renderContext = createRenderingContext(contextObject.renderContext)
+      global.renderContext.setScale(contextObject.scale)
     }else{
+      global.renderContext.setScale(contextObject.scale)
       global.renderContext.canvasResized()
       global.camera.init()
     }
