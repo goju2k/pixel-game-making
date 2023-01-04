@@ -13,6 +13,7 @@ export interface GameRenderingContext {
   getScale:()=>number
   setScale:(scale:number)=>void
   clear2d:()=>void
+  fillRect2d:(x:number, y:number, width:number, height:number, color?:string)=>void
   drawImage2d:(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number)=>void
   translate2d:(x:number, y:number)=>void
   canvasResized:()=>void
@@ -31,7 +32,7 @@ export class Canvas2dApi implements GameRenderingContext {
   constructor(ctx: CanvasRenderingContext2D){
     this.ctx = ctx
   }
-
+  
   getScale(){
     return this.scale
   }
@@ -42,6 +43,11 @@ export class Canvas2dApi implements GameRenderingContext {
   clear2d(){
     this.ctx.fillStyle = 'black'
     this.ctx.fillRect(this.translatedX * -1, this.translatedY * -1, this.ctx.canvas.width + this.translatedX, this.ctx.canvas.height + this.translatedY)
+  }
+  
+  fillRect2d(x: number, y: number, width: number, height: number, color?:string){
+    color && (this.ctx.fillStyle = color)
+    this.ctx.fillRect(x, y, width, height)
   }
 
   drawImage2d(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number){
