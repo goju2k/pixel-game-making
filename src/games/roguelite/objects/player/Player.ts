@@ -18,6 +18,8 @@ export class Player extends ObjectBase {
 
   status:'init'|'run'|'attack'='init'
 
+  particles:Particle[]=[]
+
   constructor(config:PlayerConfig){
     
     super({...config, colliderConfig:{
@@ -70,9 +72,26 @@ export class Player extends ObjectBase {
         this.nextTime = 0
         this.tileNo = 21
         this.nextTime += time
-      }else if(this.nextTime > 50){
+        
+      }else if(this.nextTime > 40){
         this.nextTime = 0
-        this.tileNo = this.tileNo===21?22:21
+
+        if(this.tileNo===21){
+
+          //총알 쏘자
+          this.particles.push(new Particle({
+            x:this.x,
+            y:this.y,
+            targetX:global.renderContext?global.keyContext.MouseX - global.renderContext.translatedX:0,
+            targetY:global.renderContext?global.keyContext.MouseY - global.renderContext.translatedY:0,
+            velocity:1,
+            width:2,
+            height:2,
+          }))
+
+        }
+
+        this.tileNo = this.tileNo===21?22:21        
       }else{
         this.nextTime += time
       }
@@ -156,6 +175,14 @@ export class Player extends ObjectBase {
 
     }
 
+    for(let i = this.particles.length - 1 ; i >= 0 ; i--){
+      if(this.particles[i].end){
+        this.particles.splice(i, 1)
+      }else{
+        this.particles[i].step(time)  
+      }
+    }
+    
     //player 에 카메라 포커스 처리
     global.camera.focusCameraTo(this)
 
@@ -167,10 +194,69 @@ export class Player extends ObjectBase {
 
     this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.rotate)
 
+    this.particles.forEach((p)=>{
+      p.draw()
+    })
+
   }
 
   destroy(): void {
     super.destroy()
   }
   
+}
+
+interface ParticleConfig extends ObjectBaseConfig{
+  targetX:number
+  targetY:number
+  velocity?:number // pixel / ms
+}
+export class Particle extends ObjectBase {
+
+  ratio:number = 0
+  velocity:number = 0.05
+  
+  targetDis:number = 0
+  
+  targetX:number = 0
+  targetY:number = 0
+
+  end:boolean = false
+
+  constructor(config:ParticleConfig){
+    
+    super({...config})
+
+    this.x = this.x + (config.x - config.targetX > 0?-6:6)
+    this.y = this.y - 8
+    
+    const deltaX = this.x - config.targetX
+    const deltaY = this.y - config.targetY
+
+    //타겟을 화면 바깥으로 설정
+    this.targetX = config.targetX + (240 * (deltaX > 0?-1:1))
+    this.targetY = config.targetY + (240 * (deltaX > 0?-1:1) * (deltaY / deltaX))
+
+    this.targetDis = Math.sqrt(Math.pow(Math.abs(config.x - this.targetX), 2) + Math.pow(Math.abs(config.y - this.targetY), 2))
+
+  }
+
+  step(time: number): void {
+    
+    const dis = time * this.velocity
+    this.ratio = dis / this.targetDis
+
+    this.setPosition(this.x + ((this.targetX - this.x) * this.ratio), this.y + ((this.targetY - this.y) * this.ratio))
+
+    this.targetDis -= dis
+    
+    this.end = this.targetDis < 0
+
+  }
+
+  draw(): void {
+    // ((global.renderContext?.ctx) as CanvasRenderingContext2D)
+    global.renderContext?.fillRect2d(this.x, this.y, 1, 1, 'lightblue')
+  }
+
 }
