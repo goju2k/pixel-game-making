@@ -74,7 +74,9 @@ export function GamePlayView({
   
   
   return <>
-    <div style={{position:'absolute', zIndex:1, width:'100%', height:'100%'}}>
+    <div style={{position:'absolute', zIndex:1, width:'100%', height:'100%'}} onContextMenu={(e)=>{
+      e.preventDefault()
+    }}>
       {children}
     </div>
     {gameDraw && <DefaultGameView {...gameViewProps} onContextChanged={onContextChanged}></DefaultGameView>}

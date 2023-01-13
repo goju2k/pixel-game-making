@@ -72,9 +72,7 @@ window.addEventListener('mousedown', (e)=>{
     context.keyContext.MouseRight = true
   }
 })
-
 window.addEventListener('mouseup', (e)=>{
-  e.preventDefault()
   if(e.button===0){
     context.keyContext.MouseLeft = false
   }else if(e.button===2){
