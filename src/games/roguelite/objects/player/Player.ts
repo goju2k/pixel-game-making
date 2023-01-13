@@ -55,7 +55,7 @@ export class Player extends ObjectBase {
   step(time: number){
 
     //기본 공격
-    if(global.keyContext.MouseLeft){
+    if(global.keyContext.MouseLeft || global.keyContext.MouseRight){
 
       //공격 방향 정하기
       const delta = global.renderContext?this.x + global.renderContext.translatedX - global.keyContext.MouseX:0
@@ -73,21 +73,39 @@ export class Player extends ObjectBase {
         this.tileNo = 21
         this.nextTime += time
         
-      }else if(this.nextTime > 40){
+      }else if(this.tileNo===21 && this.nextTime > (global.keyContext.MouseRight?50:10) || this.tileNo===22 && this.nextTime > (global.keyContext.MouseRight?200:40)){
+        
         this.nextTime = 0
 
         if(this.tileNo===21){
 
           //총알 쏘자
-          this.particles.push(new Particle({
-            x:this.x,
-            y:this.y,
-            targetX:global.renderContext?global.keyContext.MouseX - global.renderContext.translatedX:0,
-            targetY:global.renderContext?global.keyContext.MouseY - global.renderContext.translatedY:0,
-            velocity:1,
-            width:2,
-            height:2,
-          }))
+          if(global.keyContext.MouseRight){
+
+            this.particles.push(new Missile({
+              x:this.x,
+              y:this.y,
+              targetX:global.renderContext?global.keyContext.MouseX - global.renderContext.translatedX:0,
+              targetY:global.renderContext?global.keyContext.MouseY - global.renderContext.translatedY:0,
+              velocity:0.07,
+              width:2,
+              height:2,
+              rotate:this.rotate,
+            }))
+
+          }else{
+
+            this.particles.push(new Particle({
+              x:this.x,
+              y:this.y,
+              targetX:global.renderContext?global.keyContext.MouseX - global.renderContext.translatedX:0,
+              targetY:global.renderContext?global.keyContext.MouseY - global.renderContext.translatedY:0,
+              velocity:0.1,
+              width:2,
+              height:2,
+            }))
+
+          }
 
         }
 
@@ -210,6 +228,7 @@ interface ParticleConfig extends ObjectBaseConfig{
   targetX:number
   targetY:number
   velocity?:number // pixel / ms
+  rotate?:1|-1
 }
 export class Particle extends ObjectBase {
 
@@ -226,6 +245,8 @@ export class Particle extends ObjectBase {
   constructor(config:ParticleConfig){
     
     super({...config})
+
+    config.velocity && (this.velocity = config.velocity)
 
     this.x = this.x + (config.x - config.targetX > 0?-6:6)
     this.y = this.y - 8
@@ -257,6 +278,59 @@ export class Particle extends ObjectBase {
   draw(): void {
     // ((global.renderContext?.ctx) as CanvasRenderingContext2D)
     global.renderContext?.fillRect2d(this.x, this.y, 1, 1, 'lightblue')
+  }
+
+}
+
+export class Missile extends Particle {
+
+  sprite:Sprite
+  loaded:boolean = false
+
+  tileNo:number=1
+  rotate:1|-1 = 1
+
+  nextTime:number = -1
+
+  constructor(config:ParticleConfig){
+    super(config)
+    this.sprite = new Sprite('characters/projectiles/missile.png', 16, 16)
+    Promise.all([this.sprite.load()]).then(()=>{
+      this.loaded = true
+    })
+
+    this.x = this.x + (config.x - config.targetX > 0?-8:-4)
+    this.y = this.y - 5
+    config.rotate && (this.rotate = config.rotate)
+  }
+
+  step(time: number): void {
+    super.step(time)
+
+    //달리기
+    if(this.nextTime === -1){
+      this.tileNo = 1
+      this.nextTime += time
+    }
+    
+    if(this.nextTime > 30){
+      this.nextTime = 0
+      this.tileNo += 1
+      if(this.tileNo === 4){
+        this.tileNo = 1
+      }
+    }else{
+      this.nextTime += time
+    }
+
+  }
+
+  draw(): void {
+    
+    if(!this.loaded) return
+    
+    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.rotate)
+
   }
 
 }
