@@ -34,7 +34,7 @@ export function MainView(){
   }, [])
 
   return <GamePlayView onReady={onReady} onContextUpdate={onContextUpdate} gameDraw={gameDraw} gameViewProps={{
-    gameWidth:480,
-    gameHeight:270
+    // gameWidth:480,
+    // gameHeight:270
   }} />
 }
