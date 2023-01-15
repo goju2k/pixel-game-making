@@ -137,15 +137,39 @@ export function DefaultGameView({
       const ctx = contextRef.current
       if(!ctx) return
 
+      //모바일 디스플레이 여부
+      let isMobile = false
+      const angle = window.screen.orientation.angle
+      if(window.screen.width > window.screen.height && (angle !== 0 && angle !== 180)
+      || window.screen.width < window.screen.height && (angle === 0 || angle === 180)
+      ){
+        isMobile = true
+      }
+
+      //스케일 기준 축 정하기
+      let screenValue
+      let gameValue
+      if(isMobile){
+        if(angle === 0 || angle === 180){
+          screenValue = window.screen.height
+          gameValue = gameHeight
+        }else{
+          screenValue = window.screen.width
+          gameValue = gameHeight
+        }
+      }else{
+        if(angle === 0 || angle === 180){
+          screenValue = window.screen.height
+          gameValue = gameHeight
+        }else{
+          screenValue = window.screen.width
+          gameValue = gameWidth
+        }
+      }
+      
       //스케일 계산
-      const scaleRatioX = window.screen.width / gameWidth
-      const scaleRatioY = window.screen.height / gameHeight
-      
-      let scale = scaleRatioX > scaleRatioY?scaleRatioX:scaleRatioY
-      
-      // const angle = window.screen.orientation.angle
-      // if(window.screen.width < window.screen.height){
-        
+      let scale = screenValue / gameValue
+
       //   if(angle === 0){
       //     scale = scaleRatioX < scaleRatioY?scaleRatioY:scaleRatioX
       //   }else{
@@ -157,7 +181,7 @@ export function DefaultGameView({
 
       // }
 
-      console.log(scaleRatioX, scaleRatioY, scale);
+      console.log(screenValue, gameValue, scale);
       ctx.scale(scale, scale)
       
       //image scale option
