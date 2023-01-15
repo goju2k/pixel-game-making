@@ -12,6 +12,8 @@ export interface GameRenderingContext {
 
   getScale:()=>number
   setScale:(scale:number)=>void
+  isMobile:()=>boolean
+  setMobile:(isMobile:boolean)=>void
   clear2d:()=>void
   fillRect2d:(x:number, y:number, width:number, height:number, color?:string)=>void
   drawImage2d:(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number)=>void
@@ -27,6 +29,7 @@ export class Canvas2dApi implements GameRenderingContext {
   translatedX:number=0
   translatedY:number=0
 
+  mobile:boolean = false
   scale:number = 1
 
   clearX:number = 0
@@ -39,6 +42,12 @@ export class Canvas2dApi implements GameRenderingContext {
     this.setScaledClearArea()
   }
   
+  isMobile(){
+    return this.mobile
+  }
+  setMobile(isMobile:boolean){
+    this.mobile = isMobile
+  }
   getScale(){
     return this.scale
   }

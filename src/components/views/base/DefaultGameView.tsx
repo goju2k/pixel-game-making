@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react"
+import { ViewCommonUtil } from "../util/ViewCommon"
 
 export interface CanvasContextObject{
   renderContext:CanvasRenderingContext2D
   width:number, height:number
   scaledWidth:number, scaledHeight:number
   scale:number
+  isMobile:boolean
 }
 
 //컨텍스트 로드 이벤트 콜백
@@ -138,14 +140,9 @@ export function DefaultGameView({
       if(!ctx) return
 
       //모바일 디스플레이 여부
-      let isMobile = false
+      let isMobile = ViewCommonUtil.isMobile()
       const angle = window.screen.orientation.angle
-      if(window.screen.width > window.screen.height && (angle !== 0 && angle !== 180)
-      || window.screen.width < window.screen.height && (angle === 0 || angle === 180)
-      ){
-        isMobile = true
-      }
-
+      
       //스케일 기준 축 정하기
       let screenValue
       let gameValue
@@ -192,7 +189,8 @@ export function DefaultGameView({
           renderContext:contextRef.current,
           width:canvasWidth, height:canvasHeight,
           scaledWidth:canvasWidth / scale, scaledHeight:canvasHeight / scale,
-          scale
+          scale,
+          isMobile
         })
       }else{
         throw new Error('Canvas 2d is not Supported.')
