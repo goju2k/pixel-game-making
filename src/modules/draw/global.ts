@@ -5,6 +5,9 @@ import { GameRenderingContext } from "./apis";
 class KeyContext {
   //방향키
   ArrowUp:boolean=false;ArrowDown:boolean=false;ArrowRight:boolean=false;ArrowLeft:boolean=false;
+  //마우스
+  'MouseLeft':boolean=false;'MouseRight':boolean=false;
+  MouseX:number=0;MouseY:number=0;
   //숫자
   'Digit0':boolean=false;'Digit1':boolean=false;'Digit2':boolean=false;'Digit3':boolean=false;'Digit4':boolean=false;'Digit5':boolean=false;'Digit6':boolean=false;'Digit7':boolean=false;'Digit8':boolean=false;'Digit9':boolean=false;
   //알파벳
@@ -18,9 +21,6 @@ class KeyContext {
   'Enter':boolean=false;'Tab':boolean=false;'CapsLock':boolean=false;'ShiftLeft':boolean=false;'ControlLeft':boolean=false;'MetaLeft':boolean=false;'AltLeft':boolean=false;'Backquote':boolean=false;'Minus':boolean=false;
   'Equal':boolean=false;'Backspace':boolean=false;'Backslash':boolean=false;'Escape':boolean=false;'BracketLeft':boolean=false;'BracketRight':boolean=false;'Semicolon':boolean=false;'Quote':boolean=false;'Comma':boolean=false;
   'Period':boolean=false;'Slash':boolean=false;'AltRight':boolean=false;'ControlRight':boolean=false;'Insert':boolean=false;'Delete':boolean=false;'Home':boolean=false;'End':boolean=false;'PageUp':boolean=false;'PageDown':boolean=false;
-  //마우스
-  'MouseLeft':boolean=false;'MouseRight':boolean=false;
-  MouseX:number=0;MouseY:number=0;
   
 }
 
@@ -78,6 +78,19 @@ window.addEventListener('mouseup', (e)=>{
   }else if(e.button===2){
     context.keyContext.MouseRight = false
   }
+})
+window.addEventListener('touchstart', (e)=>{
+  console.log('touchstart', e);
+  e.touches.length === 1?context.keyContext.MouseLeft = true:context.keyContext.MouseRight = true
+})
+window.addEventListener('touchmove', (e)=>{
+  e.preventDefault()
+  context.keyContext.MouseX = e.touches[e.touches.length - 1].clientX / (context.renderContext?context.renderContext.getScale():1)
+  context.keyContext.MouseY = e.touches[e.touches.length - 1].clientY / (context.renderContext?context.renderContext.getScale():1)
+})
+window.addEventListener('touchend', (e)=>{
+  context.keyContext.MouseLeft = false
+  context.keyContext.MouseRight = false
 })
 
 export default context

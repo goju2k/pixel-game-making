@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react"
+import { ViewCommonUtil } from "../util/ViewCommon"
 
 export interface CanvasContextObject{
   renderContext:CanvasRenderingContext2D
   width:number, height:number
   scaledWidth:number, scaledHeight:number
   scale:number
+  isMobile:boolean
 }
 
 //컨텍스트 로드 이벤트 콜백
@@ -137,18 +139,46 @@ export function DefaultGameView({
       const ctx = contextRef.current
       if(!ctx) return
 
-      //스케일 계산
-      const scaleRatioX = window.screen.width / gameWidth
-      const scaleRatioY = window.screen.height / gameHeight
-      let scale = scaleRatioX > scaleRatioY?scaleRatioY:scaleRatioX
-      
+      //모바일 디스플레이 여부
+      let isMobile = ViewCommonUtil.isMobile()
       const angle = window.screen.orientation.angle
-      if(window.screen.width < window.screen.height && angle === 0){
-        
-        alert('세로모드는 지원하지 않습니다.')
-        throw new Error('세로모드는 지원하지 않습니다.')
+      
+      //스케일 기준 축 정하기
+      let screenValue
+      let gameValue
+      if(isMobile){
+        if(angle === 0 || angle === 180){
+          screenValue = window.screen.height
+          gameValue = gameHeight
+        }else{
+          screenValue = window.screen.width
+          gameValue = gameHeight
+        }
+      }else{
+        if(angle === 0 || angle === 180){
+          screenValue = window.screen.height
+          gameValue = gameHeight
+        }else{
+          screenValue = window.screen.width
+          gameValue = gameWidth
+        }
       }
+      
+      //스케일 계산
+      let scale = screenValue / gameValue
 
+      //   if(angle === 0){
+      //     scale = scaleRatioX < scaleRatioY?scaleRatioY:scaleRatioX
+      //   }else{
+
+      //   }
+        // scale = scale * 3
+        // alert('세로모드는 지원하지 않습니다.')
+        // throw new Error('세로모드는 지원하지 않습니다.')
+
+      // }
+
+      console.log(screenValue, gameValue, scale);
       ctx.scale(scale, scale)
       
       //image scale option
@@ -159,7 +189,8 @@ export function DefaultGameView({
           renderContext:contextRef.current,
           width:canvasWidth, height:canvasHeight,
           scaledWidth:canvasWidth / scale, scaledHeight:canvasHeight / scale,
-          scale
+          scale,
+          isMobile
         })
       }else{
         throw new Error('Canvas 2d is not Supported.')

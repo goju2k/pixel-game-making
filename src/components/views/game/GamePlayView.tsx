@@ -35,6 +35,7 @@ export function GamePlayView({
     if(!global.renderContext){
       global.renderContext = createRenderingContext(contextObject.renderContext)
       global.renderContext.setScale(contextObject.scale)
+      global.renderContext.setMobile(contextObject.isMobile)
     }else{
       global.renderContext.setScale(contextObject.scale)
       global.renderContext.canvasResized()
