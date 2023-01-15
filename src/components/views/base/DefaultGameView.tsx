@@ -140,15 +140,24 @@ export function DefaultGameView({
       //스케일 계산
       const scaleRatioX = window.screen.width / gameWidth
       const scaleRatioY = window.screen.height / gameHeight
-      let scale = scaleRatioX > scaleRatioY?scaleRatioY:scaleRatioX
       
-      const angle = window.screen.orientation.angle
-      if(window.screen.width < window.screen.height && angle === 0){
+      let scale = scaleRatioX > scaleRatioY?scaleRatioX:scaleRatioY
+      
+      // const angle = window.screen.orientation.angle
+      // if(window.screen.width < window.screen.height){
         
-        alert('세로모드는 지원하지 않습니다.')
-        throw new Error('세로모드는 지원하지 않습니다.')
-      }
+      //   if(angle === 0){
+      //     scale = scaleRatioX < scaleRatioY?scaleRatioY:scaleRatioX
+      //   }else{
 
+      //   }
+        // scale = scale * 3
+        // alert('세로모드는 지원하지 않습니다.')
+        // throw new Error('세로모드는 지원하지 않습니다.')
+
+      // }
+
+      console.log(scaleRatioX, scaleRatioY, scale);
       ctx.scale(scale, scale)
       
       //image scale option

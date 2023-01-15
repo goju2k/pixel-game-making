@@ -29,8 +29,14 @@ export class Canvas2dApi implements GameRenderingContext {
 
   scale:number = 1
 
+  clearX:number = 0
+  clearY:number = 0
+  clearWidth:number = 0
+  clearHeight:number = 0
+
   constructor(ctx: CanvasRenderingContext2D){
     this.ctx = ctx
+    this.setScaledClearArea()
   }
   
   getScale(){
@@ -38,11 +44,22 @@ export class Canvas2dApi implements GameRenderingContext {
   }
   setScale(scale:number){
     this.scale = scale
+    this.setScaledClearArea()
   }
   
+  private setScaledClearArea(){
+    const scaledW = this.ctx.canvas.width
+    const scaledH = this.ctx.canvas.height
+    this.clearX = scaledW * -1
+    this.clearY = scaledH * -1
+    this.clearWidth = scaledW * 3
+    this.clearHeight = scaledH * 3
+  }
+
   clear2d(){
     this.ctx.fillStyle = 'black'
-    this.ctx.fillRect(this.translatedX * -1, this.translatedY * -1, this.ctx.canvas.width + this.translatedX, this.ctx.canvas.height + this.translatedY)
+    this.ctx.fillRect(this.clearX, this.clearY , this.clearWidth, this.clearHeight)
+    //this.ctx.fillRect(this.translatedX * -1, this.translatedY * -1, this.ctx.canvas.width + this.translatedX, this.ctx.canvas.height + this.translatedY)
   }
   
   fillRect2d(x: number, y: number, width: number, height: number, color?:string){
