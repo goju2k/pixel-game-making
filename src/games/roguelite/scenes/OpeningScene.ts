@@ -1,50 +1,44 @@
-import { SceneBase, SceneBaseConfig } from "../../../modules/scene/base/SceneBase";
-import { Player } from "../objects/player/Player";
+import { SceneBase } from '../../../modules/scene/base/SceneBase';
+import { Player } from '../objects/player/Player';
 
-interface OpeningSceneConfig extends SceneBaseConfig {
+// interface OpeningSceneConfig extends SceneBaseConfig {
 
-}
+// }
 export class OpeningScene extends SceneBase {
   
-  player:Player = new Player({x:0, y:0, width:16, height:16})
+  player:Player = new Player({ x: 0, y: 0, width: 16, height: 16 });
   
-  constructor(config:OpeningSceneConfig){
+  init() {
 
-    super(config)
+    this.world.init();
 
+    this.player.setPosition(this.world.widthHalf, this.world.heightHalf);
+    this.player.init();
+
+    return this;
   }
 
-  init(){
-
-    this.world.init()
-
-    this.player.setPosition(this.world.widthHalf, this.world.heightHalf)
-    this.player.init()
-
-    return this
-  }
-
-  update(){
-    this.player.update()
+  update() {
+    this.player.update();
   }
   
-  step(time:number){
+  step(time:number) {
 
-    //world
-    this.world.step(time)
+    // world
+    this.world.step(time);
 
-    //player
-    this.player.step(time)
+    // player
+    this.player.step(time);
 
   }
 
-  draw(){
+  draw() {
 
-    //world
-    this.world.draw()
+    // world
+    this.world.draw();
 
-    //player
-    this.player.draw()
+    // player
+    this.player.draw();
 
   }
 

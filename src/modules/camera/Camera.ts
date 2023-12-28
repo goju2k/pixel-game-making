@@ -1,6 +1,6 @@
-import context from "../draw/global"
-import { ObjectBase } from "../object/base/ObjectBase"
-import { WorldBase } from "../scene/base/WorldBase"
+import context from '../draw/context/GlobalContext';
+import { ObjectBase } from '../object/base/ObjectBase';
+import { WorldBase } from '../scene/base/WorldBase';
 
 export enum CAMERA_MODE {
   FOLLOW='follow',
@@ -8,54 +8,58 @@ export enum CAMERA_MODE {
 }
 
 // type CAMERA_MODE = keyof CAMERA_MODE
-interface CameraConfig {
-  x?:number
-  y?:number
-  mode?:CAMERA_MODE
-  targetObject?:ObjectBase
+export interface CameraConfig {
+  x?:number;
+  y?:number;
+  mode?:CAMERA_MODE;
+  targetObject?:ObjectBase;
 }
 
 export class Camera {
   
-  x:number = 0
-  y:number = 0
+  x:number = 0;
+
+  y:number = 0;
   
-  mode:CAMERA_MODE=CAMERA_MODE.FIXED
+  mode:CAMERA_MODE = CAMERA_MODE.FIXED;
 
-  targetWorld?:WorldBase
-  targetObject?:ObjectBase
+  targetWorld?:WorldBase;
 
-  constructor(_config:CameraConfig){
-    
+  targetObject?:ObjectBase;
+
+  config:CameraConfig;
+
+  constructor(config:CameraConfig) {
+    this.config = config;
   }
 
-  init(){
-    this.x = 0
-    this.y = 0
+  init() {
+    this.x = 0;
+    this.y = 0;
   }
 
-  focusCameraTo(targetObject:ObjectBase, forceUpdate?:boolean){
+  focusCameraTo(targetObject:ObjectBase, forceUpdate?:boolean) {
 
-    if(!context.renderContext || !context.width || !context.height) return
+    if (!context.renderContext || !context.width || !context.height) return;
 
-    if(!forceUpdate && targetObject.prevX === targetObject.x && targetObject.prevY === targetObject.y) return
+    if (!forceUpdate && targetObject.prevX === targetObject.x && targetObject.prevY === targetObject.y) return;
     
-    const deltaX = ((context.width / 2) - targetObject.x)
-    const deltaY = ((context.height / 2) - targetObject.y)
+    const deltaX = ((context.width / 2) - targetObject.x);
+    const deltaY = ((context.height / 2) - targetObject.y);
     
-    if(this.x === deltaX && this.y === deltaY){
-      return
+    if (this.x === deltaX && this.y === deltaY) {
+      return;
     }
     
-    //console.log(this.x , deltaX , this.y , deltaY)
+    // console.log(this.x , deltaX , this.y , deltaY)
 
-    const tx = deltaX - this.x 
-    const ty = deltaY - this.y
+    const tx = deltaX - this.x; 
+    const ty = deltaY - this.y;
     
-    this.x = deltaX
-    this.y = deltaY
+    this.x = deltaX;
+    this.y = deltaY;
 
-    context.renderContext.translate2d(tx, ty)
+    context.renderContext.translate2d(tx, ty);
     
   }
 
