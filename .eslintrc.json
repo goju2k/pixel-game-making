@@ -125,7 +125,8 @@
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",
     "require-jsdoc": "off",
-    "no-restricted-syntax": "off"
+    "no-restricted-syntax": "off",
+    "guard-for-in": "off"
   },
   "settings": { "react": { "version": "detect" } }
 }
