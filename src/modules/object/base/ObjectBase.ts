@@ -16,6 +16,7 @@ export interface ObjectBaseConfig {
   height:number;
   anchorType?:ANCHOR_TYPE;
   colliderConfig?:ObjectColliderConfig;
+  bodyColliderConfig?:ObjectColliderConfig;
 }
 
 export abstract class ObjectBase {
@@ -43,9 +44,15 @@ export abstract class ObjectBase {
   widthHalf:number = 0;
 
   heightHalf:number = 0;
-
-  // 충돌박스
+  
+  // 충돌박스 (바닥)
   collider?:BoxCollider;
+
+  // 충돌박스 (몸체)
+  bodyCollider?:BoxCollider;
+
+  // debug
+  debugCollider?:boolean;
   
   constructor(config:ObjectBaseConfig) {
     Object.assign(this, config);
@@ -53,6 +60,9 @@ export abstract class ObjectBase {
     this.setPosition(this.x, this.y);
     if (config.colliderConfig) {
       this.collider = new BoxCollider(this, config.colliderConfig.colliderWidth, config.colliderConfig.colliderHeight, config.colliderConfig.colliderOffsetX, config.colliderConfig.colliderOffsetY);
+    }
+    if (config.bodyColliderConfig) {
+      this.bodyCollider = new BoxCollider(this, config.bodyColliderConfig.colliderWidth, config.bodyColliderConfig.colliderHeight, config.bodyColliderConfig.colliderOffsetX, config.bodyColliderConfig.colliderOffsetY);
     }
     this.init();
   }
@@ -69,6 +79,10 @@ export abstract class ObjectBase {
   abstract step(time:number):void;
 
   draw() {
+    if (this.debugCollider) {
+      this.collider && global.renderContext?.fillRect2d(this.collider?.x1, this.collider?.y1, this.collider?.width, this.collider?.height, 'red');
+      this.bodyCollider && global.renderContext?.fillRect2d(this.bodyCollider?.x1, this.bodyCollider?.y1, this.bodyCollider?.width, this.bodyCollider?.height, 'blue');
+    } 
 
   }
 
@@ -103,6 +117,7 @@ export abstract class ObjectBase {
 
     // 충돌박스 업데이트
     this.collider && this.collider.update();
+    this.bodyCollider && this.bodyCollider.update();
 
   }
 

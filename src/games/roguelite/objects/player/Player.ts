@@ -30,11 +30,20 @@ export class Player extends ObjectBase {
       ...config,
       colliderConfig: {
         colliderWidth: 12,
-        colliderHeight: 16,
+        colliderHeight: 4,
+        colliderOffsetX: 3,
+        colliderOffsetY: 14,
+      },
+      bodyColliderConfig: {
+        colliderWidth: 12,
+        colliderHeight: 14,
         colliderOffsetX: 3,
         colliderOffsetY: 1,
       },
     });
+
+    // Collider debug
+    // this.debugCollider = true;
 
     this.sprite = new Sprite('characters/soldier.png', 18, 18);
     Promise.all([ this.sprite.load() ]).then(() => {
@@ -225,6 +234,9 @@ export class Player extends ObjectBase {
     this.particles.forEach((p) => {
       p.draw();
     });
+
+    // for debug
+    super.draw();
 
   }
 
