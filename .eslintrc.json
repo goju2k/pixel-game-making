@@ -126,7 +126,8 @@
     "react/require-default-props": "off",
     "require-jsdoc": "off",
     "no-restricted-syntax": "off",
-    "guard-for-in": "off"
+    "guard-for-in": "off",
+    "lines-between-class-members": "off"
   },
   "settings": { "react": { "version": "detect" } }
 }

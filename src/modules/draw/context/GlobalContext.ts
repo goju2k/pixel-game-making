@@ -3,6 +3,7 @@
 import { KeyContext } from './KeyContext';
 import { ObjectContext } from './ObjectContext';
 
+import { Player } from '../../../games/roguelite/objects/player/Player';
 import { Camera } from '../../camera/Camera';
 import { GameRenderingContext } from '../apis';
 
@@ -11,6 +12,8 @@ class GlobalContext {
   renderContext?: GameRenderingContext;
 
   keyContext: KeyContext = new KeyContext();
+
+  playerContext!: Player;
 
   objectContext: ObjectContext = new ObjectContext();
 

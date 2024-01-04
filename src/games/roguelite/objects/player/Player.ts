@@ -29,15 +29,15 @@ export class Player extends ObjectBase {
     super({
       ...config,
       colliderConfig: {
-        colliderWidth: 12,
+        colliderWidth: 8,
         colliderHeight: 4,
-        colliderOffsetX: 3,
+        colliderOffsetX: 5,
         colliderOffsetY: 14,
       },
       bodyColliderConfig: {
-        colliderWidth: 12,
-        colliderHeight: 14,
-        colliderOffsetX: 3,
+        colliderWidth: 8,
+        colliderHeight: 16,
+        colliderOffsetX: 5,
         colliderOffsetY: 1,
       },
     });
@@ -55,6 +55,9 @@ export class Player extends ObjectBase {
   init(): void {
     
     super.init();
+
+    // context 에 추가
+    context.playerContext = this;
 
     // player 에 카메라 포커스 처리
     context.camera.focusCameraTo(this, true);
@@ -235,7 +238,7 @@ export class Player extends ObjectBase {
       p.draw();
     });
 
-    // for debug
+    // for object debug
     super.draw();
 
   }

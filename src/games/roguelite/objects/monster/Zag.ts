@@ -1,41 +1,55 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Animation } from '../../../../modules/draw/animation/Animation';
-import { Sprite } from '../../../../modules/draw/image/Sprite';
+import context from '../../../../modules/draw/context/GlobalContext';
 import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
+import { ActionMove } from '../../actions/ActionMove';
 
 interface ZagConfig extends ObjectBaseConfig {
   
 }
 
+export enum ZagStatus {
+  READY=0,
+  MOVE=1,
+  FIND_ENEMY=2,
+  ATTACKING=3,
+  ATTACKED=4,
+  DYING=5,
+}
+
 export class Zag extends ObjectBase {
   
-  sprite!:Sprite;
+  // object status
+  status:ZagStatus = ZagStatus.READY;
 
-  tileNo:number = 1;
+  // monster stat
+  life = 100;
+  speed = 20;
+  visibleRadius = 50;
 
-  rotate:1|-1 = 1;
+  // action
+  targetX = 0;
+  targetY = 0;
+  actionChase = new ActionMove(this);
 
-  nextTime:number = 0;
-
-  status:'init'|'run'|'attack' = 'init';
-
-  animation = { pose: new Animation('animation/monster/AniMetaZag.ts', 'pose') };
+  // draw stat
+  flipX:1|-1 = 1;
+  
+  // animation assets
+  animation = { 
+    pose: new Animation('animation/monster/AniMetaZag.ts', 'pose'),
+    attack: new Animation('animation/monster/AniMetaZag.ts', 'attack'),
+  };
 
   constructor(config:ZagConfig) {
     
     super({
       ...config,
-      colliderConfig: {
-        colliderWidth: 12,
-        colliderHeight: 4,
-        colliderOffsetX: 3,
-        colliderOffsetY: 14,
-      },
       bodyColliderConfig: {
-        colliderWidth: 12,
-        colliderHeight: 14,
-        colliderOffsetX: 3,
-        colliderOffsetY: 1,
+        colliderWidth: 14,
+        colliderHeight: 6,
+        colliderOffsetX: 1,
+        colliderOffsetY: 9,
       },
     });
 
@@ -45,30 +59,73 @@ export class Zag extends ObjectBase {
   }
 
   init(): void {
-    
     super.init();
-
   }
   
   step(time: number) {
-    // @ts-ignore
-    this.animation?.pose.step(time);
+    
+    // if (this.life === 0) {
+
+    // }
+
+    // 상태별 애니메이션 선택
+    switch (this.status) {
+      case ZagStatus.READY:
+        // player 타게팅
+        this.setMoveTarget(context.playerContext.x, context.playerContext.y);
+        // action 계산
+        this.actionChase.calc(time);
+        // position 설정
+        this.setPosition(this.x, this.y);
+        // 기본 animation
+        this.flipX = this.actionChase.moveDirectionH ? -1 : 1; // 방향 설정
+        this.animation.pose.step(time);
+        break;
+      case ZagStatus.ATTACKING:
+        this.animation.attack.step(time);
+        break;
+    
+      default:
+        break;
+    }
+    
   }
 
   draw(): void {
     
-    // this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.rotate);
-
-    // @ts-ignore
-    this.animation?.pose.draw(this.drawX, this.drawY);
-
-    // for debug
+    // 상태별 애니메이션 그리기
+    switch (this.status) {
+      case ZagStatus.READY:
+        this.animation.pose.draw(this.drawX, this.drawY, this.flipX);
+        break;
+      case ZagStatus.ATTACKING:
+        this.animation.attack.draw(this.drawX, this.drawY, this.flipX);
+        break;
+    
+      default:
+        break;
+    }
+    
+    // for object debug
     super.draw();
 
   }
 
   destroy(): void {
     super.destroy();
+  }
+
+  private setMoveTarget(x:number, y:number) {
+    
+    if (this.targetX === x && this.targetY === y) {
+      return;
+    }
+
+    this.targetX = x;
+    this.targetY = y;
+
+    this.actionChase.moveSetup(this.targetX, this.targetY);
+
   }
   
 }

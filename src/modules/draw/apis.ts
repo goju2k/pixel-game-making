@@ -14,7 +14,7 @@ export interface GameRenderingContext {
   isMobile:()=>boolean;
   setMobile:(isMobile:boolean)=>void;
   clear2d:()=>void;
-  fillRect2d:(x:number, y:number, width:number, height:number, color?:string)=>void;
+  fillRect2d:(x:number, y:number, width:number, height:number, color?:string, alpha?:number)=>void;
   drawImage2d:(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number)=>void;
   translate2d:(x:number, y:number)=>void;
   canvasResized:()=>void;
@@ -78,9 +78,11 @@ export class Canvas2dApi implements GameRenderingContext {
     // this.ctx.fillRect(this.translatedX * -1, this.translatedY * -1, this.ctx.canvas.width + this.translatedX, this.ctx.canvas.height + this.translatedY)
   }
   
-  fillRect2d(x: number, y: number, width: number, height: number, color?:string) {
+  fillRect2d(x: number, y: number, width: number, height: number, color?:string, alpha?:number) {
+    alpha && (this.ctx.globalAlpha = alpha);
     color && (this.ctx.fillStyle = color);
     this.ctx.fillRect(x, y, width, height);
+    alpha && (this.ctx.globalAlpha = 1);
   }
 
   drawImage2d(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType) {

@@ -9,7 +9,10 @@ export class OpeningScene extends SceneBase {
   
   player:Player = new Player({ x: 0, y: 0, width: 16, height: 16 });
 
-  mosters:Zag[] = [ new Zag({ x: 100, y: 100, width: 16, height: 16 }) ];
+  // mosters:Zag[] = [ new Zag({ x: 100, y: 100, width: 16, height: 16 }) ];
+  mosters:Zag[] = [];
+
+  timeTotal:number = 0;
   
   init() {
 
@@ -18,11 +21,8 @@ export class OpeningScene extends SceneBase {
     this.player.setPosition(this.world.widthHalf, this.world.heightHalf);
     this.player.init();
 
-    this.mosters.forEach((mon) => {
-      mon.setPosition(this.world.widthHalf + 100, this.world.heightHalf + 100);
-      mon.init();
-    });
-
+    this.generateMonster(10);
+    
     return this;
   }
 
@@ -32,11 +32,16 @@ export class OpeningScene extends SceneBase {
   
   step(time:number) {
 
+    this.timeTotal += time;
+
     // world
     this.world.step(time);
 
     // player
     this.player.step(time);
+
+    // game 진행
+    this.gameStep();
 
     // monsters
     for (let i = 0; i < this.mosters.length; i++) {
@@ -57,6 +62,29 @@ export class OpeningScene extends SceneBase {
 
     // player
     this.player.draw();
+
+  }
+
+  private gameStep() {
+    if (this.timeTotal > 5000) {
+      this.timeTotal = 0;
+      this.generateMonster(Math.floor(Math.random() * 10));
+    }
+  }
+
+  private generateMonster(count:number) {
+
+    const newMonsters = Array.from(Array(count)).map(() => new Zag({ x: 100, y: 100, width: 16, height: 16 }));
+
+    newMonsters.forEach((mon) => {
+      mon.setPosition(
+        this.world.widthHalf - this.world.widthHalf + Math.random() * this.world.widthHalf * 2,
+        this.world.heightHalf - this.world.heightHalf + Math.random() * this.world.heightHalf * 2,
+      );
+      mon.init();
+    });
+
+    this.mosters.push(...newMonsters);
 
   }
 

@@ -157,7 +157,7 @@ export class Animation {
 
   }
 
-  draw(x:number, y:number) {
+  draw(x:number, y:number, flipX?:1|-1) {
 
     // console.log('this.gapTime=>'+gapTime);
     if (!this.dataLoaded || !this.playing) {
@@ -165,7 +165,7 @@ export class Animation {
     }
 
     // 현재 프레임 draw
-    this.currSprite?.drawNo(x, y, this.currFrame?.pos || 1);
+    this.currSprite?.drawNo(x, y, this.currFrame?.pos || 1, flipX);
     
   }
 

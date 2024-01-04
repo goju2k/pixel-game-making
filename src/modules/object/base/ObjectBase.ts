@@ -44,7 +44,7 @@ export abstract class ObjectBase {
   widthHalf:number = 0;
 
   heightHalf:number = 0;
-  
+
   // 충돌박스 (바닥)
   collider?:BoxCollider;
 
@@ -53,6 +53,12 @@ export abstract class ObjectBase {
 
   // debug
   debugCollider?:boolean;
+  
+  // 속도
+  speed:number = 0;
+  
+  status: any;
+  STAT_HIT: any;
   
   constructor(config:ObjectBaseConfig) {
     Object.assign(this, config);
@@ -80,8 +86,8 @@ export abstract class ObjectBase {
 
   draw() {
     if (this.debugCollider) {
-      this.collider && global.renderContext?.fillRect2d(this.collider?.x1, this.collider?.y1, this.collider?.width, this.collider?.height, 'red');
-      this.bodyCollider && global.renderContext?.fillRect2d(this.bodyCollider?.x1, this.bodyCollider?.y1, this.bodyCollider?.width, this.bodyCollider?.height, 'blue');
+      this.collider && global.renderContext?.fillRect2d(this.collider?.x1, this.collider?.y1, this.collider?.width, this.collider?.height, 'red', 0.3);
+      this.bodyCollider && global.renderContext?.fillRect2d(this.bodyCollider?.x1, this.bodyCollider?.y1, this.bodyCollider?.width, this.bodyCollider?.height, 'blue', 0.3);
     } 
 
   }
