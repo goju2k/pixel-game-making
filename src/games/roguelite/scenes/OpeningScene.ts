@@ -1,4 +1,6 @@
+import { ObjectBase } from '../../../modules/object/base/ObjectBase';
 import { SceneBase } from '../../../modules/scene/base/SceneBase';
+import { Doltan } from '../objects/monster/Doltan';
 import { Ghost } from '../objects/monster/Ghost';
 import { Zag } from '../objects/monster/Zag';
 import { Player } from '../objects/player/Player';
@@ -11,7 +13,7 @@ export class OpeningScene extends SceneBase {
   player:Player = new Player({ x: 0, y: 0, width: 16, height: 16 });
 
   // mosters:Zag[] = [ new Zag({ x: 100, y: 100, width: 16, height: 16 }) ];
-  mosters:(Zag|Ghost)[] = [];
+  mosters:ObjectBase[] = [];
 
   timeTotal:number = 0;
   
@@ -22,7 +24,7 @@ export class OpeningScene extends SceneBase {
     this.player.setPosition(this.world.widthHalf, this.world.heightHalf);
     this.player.init();
 
-    this.generateMonster(5);
+    this.generateMonster(1);
     
     return this;
   }
@@ -69,15 +71,23 @@ export class OpeningScene extends SceneBase {
   private gameStep() {
     if (this.timeTotal > 7000) {
       this.timeTotal = 0;
-      this.generateMonster(Math.floor(Math.random() * 10));
+      this.generateMonster(Math.floor(Math.random() * 1));
     }
   }
 
   private generateMonster(count:number) {
 
-    const zagCount = Math.floor((Math.random() * count) + 1);
-    const newMonsters:(Zag|Ghost)[] = Array.from(Array(zagCount)).map(() => new Zag({ x: 100, y: 100, width: 16, height: 16 }));
-    newMonsters.push(...Array.from(Array(count - zagCount)).map(() => new Ghost({ x: 100, y: 100, width: 16, height: 16 })));
+    const newMonsters:ObjectBase[] = [];
+    let nextCount = 0;
+
+    nextCount = Math.floor((Math.random() * count) + 1);
+    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Doltan({ x: 100, y: 100, width: 16, height: 16 })));
+
+    nextCount = Math.floor((Math.random() * count) + 1);
+    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Ghost({ x: 100, y: 100, width: 16, height: 16 })));
+
+    nextCount = Math.floor((Math.random() * count) + 1);
+    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Zag({ x: 100, y: 100, width: 16, height: 16 })));
 
     newMonsters.forEach((mon) => {
       mon.setPosition(
