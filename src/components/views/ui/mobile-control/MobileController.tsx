@@ -1,5 +1,5 @@
 import { Flex } from '@mint-ui/core';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import context from '../../../../modules/draw/context/GlobalContext';
@@ -7,18 +7,18 @@ import context from '../../../../modules/draw/context/GlobalContext';
 const Container = styled(Flex)`
   pointer-events: auto;
   position: absolute;
-  left: 10px;
-  top: calc(100% - 250px);
+  // left: 10px;
+  top: calc(100% - 210px);
   width: 200px;
   height: 200px;
-  background: #d3d3d380;
+  // background: #d3d3d380;
 `;
 
 const JoyStick = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 100%;
-  background: red;
+  background: #ff8d00;
   opacity: 0.5;
 `;
 
@@ -28,20 +28,35 @@ export interface MobileControllerProps {
 export function MobileController({ disabled = true }:MobileControllerProps) {
 
   const stick = useRef<HTMLDivElement | null>(null);
-  const stickTouched = useRef(false);
+  const stickTouchedId = useRef(-1);
   const stickTouchStart = useRef<[number, number]>([ 0, 0 ]);
+
+  const [ msg, setMsg ] = useState('');
 
   useEffect(() => {
 
     const handleTouchStart = (e: TouchEvent) => {
-      // console.log('start', e);
-      if (!stickTouched.current) {
-        e.touches.length === 1 ? context.keyContext.MouseLeft = true : context.keyContext.MouseRight = true;
+      // console.log('start', e, 'changedTouches', e.changedTouches.length);
+      const shootTouchCount = Array.from(e.touches).filter((t) => t.identifier !== stickTouchedId.current).length;
+      setMsg('');
+      if (shootTouchCount > 0) {
+        shootTouchCount === 1 ? context.keyContext.MouseLeft = true : context.keyContext.MouseRight = true;
       }
     };
     const handleTouchMove = (e: TouchEvent) => {
       // console.log('move', e);
-      if (stickTouched.current) {
+
+      let stickTouch:Touch|undefined;
+      let shootTouch:Touch|undefined;
+      Array.from(e.changedTouches).forEach((t) => {
+        if (t.identifier === stickTouchedId.current) {
+          stickTouch = t;
+        } else if (shootTouch === undefined) {
+          shootTouch = t;
+        }
+      });
+      
+      if (stickTouch) {
 
         // 가상 조이스틱 위치 설정
         let deltaX = e.touches[0].clientX - stickTouchStart.current[0];
@@ -63,32 +78,51 @@ export function MobileController({ disabled = true }:MobileControllerProps) {
           top < 50 && (context.keyContext.KeyW = true);
           top > 50 && (context.keyContext.KeyS = true);
 
-          if (left > 25 && left < 75) {
+          if (left > 30 && left < 70) {
             context.keyContext.KeyA = false;
             context.keyContext.KeyD = false;
           }
-          if (top > 25 && top < 75) {
+          if (top > 30 && top < 70) {
             context.keyContext.KeyW = false;
             context.keyContext.KeyS = false;
           }
           
         }
 
-      } else {
+      }
+
+      if (shootTouch) {
         context.keyContext.MouseX = e.touches[e.touches.length - 1].clientX / (context.renderContext ? context.renderContext.getScale() : 1);
         context.keyContext.MouseY = e.touches[e.touches.length - 1].clientY / (context.renderContext ? context.renderContext.getScale() : 1);
       }
+
     };
-    const handleTouchEnd = () => {
-      // console.log('end', e);
-      if (stickTouched.current) {
-        stickTouched.current = false;
+    const handleTouchEnd = (e:TouchEvent) => {
+
+      // console.log('end', e.changedTouches);
+      let stickTouch:Touch|undefined;
+      let shootTouch:Touch|undefined;
+      Array.from(e.changedTouches).forEach((t) => {
+        if (t.identifier === stickTouchedId.current) {
+          stickTouch = t;
+        } else if (shootTouch === undefined) {
+          shootTouch = t;
+        }
+      });
+
+      if (stickTouch) {
+        // console.log('stick end', stickTouch);
+        stickTouchedId.current = -1;
         stick.current && (stick.current.style.transform = `translate(${0}px, ${0}px)`);
         clearMoveKeys();
-      } else {
+      } 
+
+      if (shootTouch) {
+        // console.log('shoot end', shootTouch);
         context.keyContext.MouseLeft = false;
         context.keyContext.MouseRight = false;        
       }
+      
     };
 
     window.addEventListener('touchstart', handleTouchStart);
@@ -110,11 +144,15 @@ export function MobileController({ disabled = true }:MobileControllerProps) {
           <JoyStick
             ref={stick}
             onTouchStart={(e) => {
-              // console.log('stick start');
-              stickTouched.current = true;
-              stickTouchStart.current = [ e.touches.item(0).clientX, e.touches.item(0).clientY ];
+              stickTouchedId.current = e.touches.item(0).identifier;
+              // console.log('stick id', stickTouchedId.current);
+              stickTouchStart.current = [ 
+                e.touches.item(0).clientX,
+                e.touches.item(0).clientY, 
+              ];
             }}
-          /> 
+          >{msg}
+          </JoyStick>
         </Container>
       )}
     </>
