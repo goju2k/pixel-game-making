@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { GameUI } from '../ui/GameUI';
 import { ViewCommonUtil } from '../util/ViewCommon';
 
 export interface CanvasContextObject{
@@ -229,6 +230,7 @@ export function DefaultGameView({
     >
 
       {canvasLetterBox}
+      {canvasWidth > 0 && <GameUI />}
       {canvasWidth > 0 && <HtmlCanvas ref={canvasRef} canvasWidth={canvasWidth} canvasHeight={canvasHeight} />}
       {canvasBackground}
       
