@@ -4,11 +4,11 @@ import context from '../../../../modules/draw/context/GlobalContext';
 import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
 import { ActionMove } from '../../actions/ActionMove';
 
-interface GhostConfig extends ObjectBaseConfig {
+interface DoltanConfig extends ObjectBaseConfig {
   
 }
 
-export enum GhostStatus {
+export enum DoltanStatus {
   READY=0,
   MOVE=1,
   CHASE_ENEMY=2,
@@ -17,14 +17,14 @@ export enum GhostStatus {
   DYING=5,
 }
 
-export class Ghost extends ObjectBase {
+export class Doltan extends ObjectBase {
   
   // object status
-  status:GhostStatus = GhostStatus.CHASE_ENEMY;
+  status:DoltanStatus = DoltanStatus.CHASE_ENEMY;
 
   // monster stat
   life = 100;
-  speed = 20;
+  speed = 15;
   visibleRadius = 50;
 
   // action
@@ -37,11 +37,11 @@ export class Ghost extends ObjectBase {
   
   // animation assets
   animation = { 
-    pose: new Animation('animation/monster/AniMetaGhost.ts', 'pose'),
-    attack: new Animation('animation/monster/AniMetaGhost.ts', 'attack'),
+    pose: new Animation('animation/monster/AniMetaDoltan.ts', 'pose'),
+    attack: new Animation('animation/monster/AniMetaDoltan.ts', 'attack'),
   };
 
-  constructor(config:GhostConfig) {
+  constructor(config:DoltanConfig) {
     
     super({
       ...config,
@@ -72,7 +72,7 @@ export class Ghost extends ObjectBase {
     
     // 상태별 애니메이션 선택
     switch (this.status) {
-      case GhostStatus.CHASE_ENEMY:
+      case DoltanStatus.CHASE_ENEMY:
         // player 타게팅
         this.setMoveTarget(context.playerContext.x, context.playerContext.y);
         // action 계산
@@ -81,7 +81,7 @@ export class Ghost extends ObjectBase {
         this.flipX = this.actionChase.moveDirectionH ? -1 : 1; // 방향 설정
         this.animation.pose.step(time);
         break;
-      case GhostStatus.ATTACKING:
+      case DoltanStatus.ATTACKING:
         this.animation.attack.step(time);
         break;
     
@@ -90,9 +90,10 @@ export class Ghost extends ObjectBase {
     }
     
     if (this.collider.body?.checkCollisionWith(context.playerContext, 'body')) {
-      this.status = GhostStatus.ATTACKING;
+      this.status = DoltanStatus.ATTACKING;
     } else {
-      this.status = GhostStatus.CHASE_ENEMY;
+      this.status = DoltanStatus.CHASE_ENEMY;
+      this.animation.attack.setAnimation('attack', true);
     }
 
   }
@@ -101,10 +102,10 @@ export class Ghost extends ObjectBase {
     
     // 상태별 애니메이션 그리기
     switch (this.status) {
-      case GhostStatus.CHASE_ENEMY:
+      case DoltanStatus.CHASE_ENEMY:
         this.animation.pose.draw(this.drawX, this.drawY, this.flipX);
         break;
-      case GhostStatus.ATTACKING:
+      case DoltanStatus.ATTACKING:
         this.animation.attack.draw(this.drawX, this.drawY, this.flipX);
         break;
     
