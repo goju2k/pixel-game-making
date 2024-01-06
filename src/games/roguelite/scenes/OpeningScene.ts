@@ -1,4 +1,5 @@
 import { SceneBase } from '../../../modules/scene/base/SceneBase';
+import { Ghost } from '../objects/monster/Ghost';
 import { Zag } from '../objects/monster/Zag';
 import { Player } from '../objects/player/Player';
 
@@ -10,7 +11,7 @@ export class OpeningScene extends SceneBase {
   player:Player = new Player({ x: 0, y: 0, width: 16, height: 16 });
 
   // mosters:Zag[] = [ new Zag({ x: 100, y: 100, width: 16, height: 16 }) ];
-  mosters:Zag[] = [];
+  mosters:(Zag|Ghost)[] = [];
 
   timeTotal:number = 0;
   
@@ -66,7 +67,7 @@ export class OpeningScene extends SceneBase {
   }
 
   private gameStep() {
-    if (this.timeTotal > 5000) {
+    if (this.timeTotal > 7000) {
       this.timeTotal = 0;
       this.generateMonster(Math.floor(Math.random() * 10));
     }
@@ -74,7 +75,9 @@ export class OpeningScene extends SceneBase {
 
   private generateMonster(count:number) {
 
-    const newMonsters = Array.from(Array(count)).map(() => new Zag({ x: 100, y: 100, width: 16, height: 16 }));
+    const zagCount = Math.floor((Math.random() * count) + 1);
+    const newMonsters:(Zag|Ghost)[] = Array.from(Array(zagCount)).map(() => new Zag({ x: 100, y: 100, width: 16, height: 16 }));
+    newMonsters.push(...Array.from(Array(count - zagCount)).map(() => new Ghost({ x: 100, y: 100, width: 16, height: 16 })));
 
     newMonsters.forEach((mon) => {
       mon.setPosition(
