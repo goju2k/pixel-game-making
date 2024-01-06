@@ -64,19 +64,4 @@ window.addEventListener('blur', () => {
   context.keyContext.clearAll();
 });
 
-// for Mobile
-window.addEventListener('touchstart', (e) => {
-  console.log('touchstart', e);
-  e.touches.length === 1 ? context.keyContext.MouseLeft = true : context.keyContext.MouseRight = true;
-});
-window.addEventListener('touchmove', (e) => {
-  e.preventDefault();
-  context.keyContext.MouseX = e.touches[e.touches.length - 1].clientX / (context.renderContext ? context.renderContext.getScale() : 1);
-  context.keyContext.MouseY = e.touches[e.touches.length - 1].clientY / (context.renderContext ? context.renderContext.getScale() : 1);
-});
-window.addEventListener('touchend', () => {
-  context.keyContext.MouseLeft = false;
-  context.keyContext.MouseRight = false;
-});
-
 export default context;
