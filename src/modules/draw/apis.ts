@@ -109,11 +109,6 @@ export class Canvas2dApi implements GameRenderingContext {
     // flip 복귀
     if (flipX || flipY) this.ctx.restore();
     
-    // 디버그용 박스
-    // this.ctx.lineWidth = 1
-    // this.ctx.strokeStyle = 'black'
-    // this.ctx.strokeRect(Math.floor(x), Math.floor(y), this.scaleWidth, this.scaleHeight);
-
   }
 
   translate2d(x:number, y:number) {
