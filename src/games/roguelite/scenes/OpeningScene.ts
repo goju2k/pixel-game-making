@@ -21,7 +21,7 @@ export class OpeningScene extends SceneBase {
     this.player.setPosition(this.world.widthHalf, this.world.heightHalf);
     this.player.init();
 
-    this.generateMonster(10);
+    this.generateMonster(5);
     
     return this;
   }
@@ -55,13 +55,13 @@ export class OpeningScene extends SceneBase {
     // world
     this.world.draw();
 
+    // player
+    this.player.draw();
+
     // monsters
     for (let i = 0; i < this.mosters.length; i++) {
       this.mosters[i].draw();
     }
-
-    // player
-    this.player.draw();
 
   }
 

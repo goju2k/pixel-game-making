@@ -52,15 +52,15 @@ export const AniMetaZag:AnimationMeta<'pose'|'attack', 'zag'|'zag2'> = {
         },
         {
           pos: 4,
-          delay: 50,
+          delay: 20,
         },
         {
           pos: 5,
-          delay: 50,
+          delay: 20,
         },
         {
           pos: 6,
-          delay: 50,
+          delay: 20,
         },
       ],
     },

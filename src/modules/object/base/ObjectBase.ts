@@ -1,5 +1,5 @@
 import global from '../../draw/context/GlobalContext';
-import { BoxCollider } from '../collider/BoxCollider';
+import { BoxCollider, ColliderType } from '../collider/BoxCollider';
 
 export interface ObjectColliderConfig {
   colliderWidth?:number;
@@ -45,11 +45,8 @@ export abstract class ObjectBase {
 
   heightHalf:number = 0;
 
-  // 충돌박스 (바닥)
-  collider?:BoxCollider;
-
-  // 충돌박스 (몸체)
-  bodyCollider?:BoxCollider;
+  // 충돌박스 Map
+  collider:Record<ColliderType, BoxCollider|undefined> = { base: undefined, body: undefined };
 
   // debug
   debugCollider?:boolean;
@@ -57,19 +54,21 @@ export abstract class ObjectBase {
   // 속도
   speed:number = 0;
   
-  status: any;
-  STAT_HIT: any;
-  
   constructor(config:ObjectBaseConfig) {
+
     Object.assign(this, config);
     this.setSize(this.width, this.height);
     this.setPosition(this.x, this.y);
+
+    // base
     if (config.colliderConfig) {
-      this.collider = new BoxCollider(this, config.colliderConfig.colliderWidth, config.colliderConfig.colliderHeight, config.colliderConfig.colliderOffsetX, config.colliderConfig.colliderOffsetY);
+      this.collider.base = new BoxCollider(this, config.colliderConfig.colliderWidth, config.colliderConfig.colliderHeight, config.colliderConfig.colliderOffsetX, config.colliderConfig.colliderOffsetY);
     }
+    // body
     if (config.bodyColliderConfig) {
-      this.bodyCollider = new BoxCollider(this, config.bodyColliderConfig.colliderWidth, config.bodyColliderConfig.colliderHeight, config.bodyColliderConfig.colliderOffsetX, config.bodyColliderConfig.colliderOffsetY);
+      this.collider.body = new BoxCollider(this, config.bodyColliderConfig.colliderWidth, config.bodyColliderConfig.colliderHeight, config.bodyColliderConfig.colliderOffsetX, config.bodyColliderConfig.colliderOffsetY);
     }
+
     this.init();
   }
   
@@ -86,8 +85,8 @@ export abstract class ObjectBase {
 
   draw() {
     if (this.debugCollider) {
-      this.collider && global.renderContext?.fillRect2d(this.collider?.x1, this.collider?.y1, this.collider?.width, this.collider?.height, 'red', 0.3);
-      this.bodyCollider && global.renderContext?.fillRect2d(this.bodyCollider?.x1, this.bodyCollider?.y1, this.bodyCollider?.width, this.bodyCollider?.height, 'blue', 0.3);
+      this.collider.base && global.renderContext?.fillRect2d(this.collider.base?.x1, this.collider.base?.y1, this.collider.base?.width, this.collider.base?.height, 'red', 0.3);
+      this.collider.body && global.renderContext?.fillRect2d(this.collider.body?.x1, this.collider.body?.y1, this.collider.body?.width, this.collider.body?.height, 'blue', 0.3);
     } 
 
   }
@@ -122,8 +121,8 @@ export abstract class ObjectBase {
     }
 
     // 충돌박스 업데이트
-    this.collider && this.collider.update();
-    this.bodyCollider && this.bodyCollider.update();
+    this.collider.base && this.collider.base.update();
+    this.collider.body && this.collider.body.update();
 
   }
 

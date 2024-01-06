@@ -94,7 +94,7 @@ export class Player extends ObjectBase {
         
       } else if (
         (this.tileNo === 21 && this.nextTime > (context.keyContext.MouseRight ? 50 : 10)) 
-      || (this.tileNo === 22 && this.nextTime > (context.keyContext.MouseRight ? 200 : 40))
+      || (this.tileNo === 22 && this.nextTime > (context.keyContext.MouseRight ? 50 : 40))
       ) {
         
         this.nextTime = 0;
@@ -161,7 +161,7 @@ export class Player extends ObjectBase {
         this.setPosition(moveX);
       
         // 충돌났으면
-        if (this.collider?.checkCollisionList(context.objectContext.list)) {
+        if (this.collider.base?.checkCollisionList(context.objectContext.list)) {
         // 되돌리기
           this.setPosition(orgX);
           this.prevX = orgPrevX;
@@ -177,7 +177,7 @@ export class Player extends ObjectBase {
         this.setPosition(undefined, moveY);
 
         // 충돌났으면
-        if (this.collider?.checkCollisionList(context.objectContext.list)) {
+        if (this.collider.base?.checkCollisionList(context.objectContext.list)) {
         // 되돌리기
           this.setPosition(undefined, orgY);
           this.prevY = orgPrevY;

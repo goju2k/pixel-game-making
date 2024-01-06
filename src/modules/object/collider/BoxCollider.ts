@@ -1,4 +1,7 @@
+import { ArrayPoolUtil } from '../../util/object/ArrayPool';
 import { ObjectBase } from '../base/ObjectBase';
+
+export type ColliderType = 'base'|'body'
 
 export class BoxCollider {
 
@@ -23,9 +26,6 @@ export class BoxCollider {
 
   y2:number = 0;
 
-  // temp
-  TEMP_ARRAY:number[] = new Array(4);
-
   constructor(target:ObjectBase, width?:number, height?:number, offsetX?:number, offsetY?:number) {
     this.target = target;
     this.width = width || target.width;
@@ -42,40 +42,46 @@ export class BoxCollider {
     this.y2 = this.target.drawY + this.offsetY + this.height;
   }
 
-  checkCollisionList(targetList:ObjectBase[]) {
+  checkCollisionList(targetList:ObjectBase[], type:ColliderType = 'base') {
     for (const target of targetList) {
-      if (target !== this.target && this.checkCollisionWith(target)) {
+      if (target !== this.target && this.checkCollisionWith(target, type)) {
         return true;
       }
     }
     return false;
   }
 
-  checkCollisionWith(target:ObjectBase) {
+  checkCollisionWith(target:ObjectBase, type:ColliderType = 'base') {
+    const targetCollider = target.collider[type];
+    if (targetCollider) {
+      return this.checkCollision(this, targetCollider) || this.checkCollision(targetCollider, this);
+    }
+    return false;
+  }
 
-    if (!target.collider) return false;
+  private checkCollision(source:BoxCollider, target:BoxCollider) {
 
-    const line = this.TEMP_ARRAY;
+    const line = ArrayPoolUtil.ARRAY_2;
     for (let i = 0, len = 4; i < len; i++) {
-
+  
       if (i === 0) {
-        line[0] = this.x1;
-        line[1] = this.y1;
+        line[0] = source.x1;
+        line[1] = source.y1;
       } else if (i === 1) {
-        line[0] = this.x2;
-        line[1] = this.y1;
+        line[0] = source.x2;
+        line[1] = source.y1;
       } else if (i === 2) {
-        line[0] = this.x2;
-        line[1] = this.y2;
+        line[0] = source.x2;
+        line[1] = source.y2;
       } else if (i === 3) {
-        line[0] = this.x1;
-        line[1] = this.y2;
+        line[0] = source.x1;
+        line[1] = source.y2;
       }
-
-      if (target.collider.x2 >= line[0] && target.collider.y2 >= line[1] && target.collider.x1 <= line[0] && target.collider.y1 <= line[1]) {
+  
+      if (target.x2 >= line[0] && target.y2 >= line[1] && target.x1 <= line[0] && target.y1 <= line[1]) {
         return true;
       }
-
+  
     }
 
     return false;

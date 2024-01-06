@@ -1,31 +1,60 @@
-import context from '../../../modules/draw/context/GlobalContext';
 import { ObjectBase } from '../../../modules/object/base/ObjectBase';
+import { ColliderType } from '../../../modules/object/collider/BoxCollider';
 import { PhysicsUtil } from '../../../modules/util/math/Physics';
+
+export enum ActionMoveStatus {
+  /** 0 : 준비 */
+  IDLE = 0,
+  /** 1 : 이동중 */
+  MOVING = 1,
+}
 
 export class ActionMove {
 
   targetObject!:ObjectBase;
+
+  // 충돌 체크 정보
+  colliderListForCheck:ObjectBase[] = [];
+  
+  // 이동 타겟 좌표
   movex: number;
   movey: number;
+
+  // 이동 상태
+  status: ActionMoveStatus;
+
+  // 이동 계산 변수
   moveDis: number;
   moveDisX: number;
   moveDisY: number;
+  
   moveCurrDis: number;
   currDisRatio: number;
+  
   moveToX: number;
   moveToY: number;
+  
   moveDirection: number;
-  status: number;
-  speedMs!: number;
   moveDirectionH!: boolean;
   moveDirectionV!: boolean;
-  speed!: number;
   
-  constructor(targetObject:ObjectBase) {
+  speedMs!: number;
+  speed!: number;
+
+  constructor(targetObject:ObjectBase, colliderListForCheck?:ObjectBase|(ObjectBase[])) {
 
     // 대상 object
     this.targetObject = targetObject;
 
+    // 충돌 체크 대상
+    if (colliderListForCheck) {
+      if (Array.isArray(colliderListForCheck)) {
+        this.colliderListForCheck = colliderListForCheck;
+      } else {
+        this.colliderListForCheck.push(colliderListForCheck);
+      }
+    }
+    
     // 초기화
     this.initSpeed();
       
@@ -42,7 +71,7 @@ export class ActionMove {
     this.moveDirection = 0; // 0:left 1:right
 
     // 상태
-    this.status = 0; // 0:준비 1:실행중
+    this.status = ActionMoveStatus.IDLE;
 
   }
 
@@ -54,9 +83,9 @@ export class ActionMove {
 
   }
 
-  moveSetup(targetX:number, targetY:number) {
+  setMoveTarget(targetX:number, targetY:number) {
 
-    this.status = 1; // 실행중
+    this.status = ActionMoveStatus.MOVING;
 
     this.movex = targetX;
     this.movey = targetY;
@@ -71,15 +100,19 @@ export class ActionMove {
 
   }
 
-  calc(gapTime:number) {
+  next(gapTime:number, type?:ColliderType) {
 
+    // 이번 이동 거리
     this.moveCurrDis = this.speedMs * gapTime;
-          
+    
+    // 이동 비율
     this.currDisRatio = this.moveCurrDis / this.moveDis;
 
+    // x,y 축 이동 거리 계산
     this.moveToX = this.moveDisX * this.currDisRatio;
     this.moveToY = this.moveDisY * this.currDisRatio;
 
+    // x 축 위치 계산
     if ((this.moveToX > 0 && this.targetObject.x < this.movex)
       || (this.moveToX < 0 && this.targetObject.x > this.movex)
     ) {
@@ -88,6 +121,7 @@ export class ActionMove {
       this.moveToX = 0;
     }
 
+    // y 축 위치 계산
     if ((this.moveToY > 0 && this.targetObject.y < this.movey)
       || (this.moveToY < 0 && this.targetObject.y > this.movey)
     ) {
@@ -96,6 +130,7 @@ export class ActionMove {
       this.moveToY = 0;
     }
 
+    // 이동 계산 결과 검증 (목적지 도착시 또는 객체 충돌시 좌표를 동일하게 맞춤)
     if (this.movex === 0 && this.movey === 0) {
       this.targetObject.x = this.movex;
       this.targetObject.y = this.movey;
@@ -105,66 +140,24 @@ export class ActionMove {
       this.targetObject.prevY = this.targetObject.y;
       this.targetObject.x = this.moveDirectionH ? Math.min(this.targetObject.x, this.movex) : Math.max(this.targetObject.x, this.movex);
       this.targetObject.y = this.moveDirectionV ? Math.min(this.targetObject.y, this.movey) : Math.max(this.targetObject.y, this.movey);
-
+      
       // 충돌체크
-      if (context.playerContext !== this.targetObject && this.targetObject.status !== this.targetObject.STAT_HIT) {
-
-        const playerBox = context.playerContext.bodyCollider;
-        const targetBox = this.targetObject.bodyCollider;
-  
-        if (playerBox && targetBox) {
-
-          if (PhysicsUtil.checkCrossBox(
-            playerBox.x1, 
-            playerBox.y1, 
-            playerBox.x2, 
-            playerBox.y2,
-            targetBox.x1, 
-            targetBox.y1, 
-            targetBox.x2, 
-            targetBox.y2,
-          )) {
-            this.targetObject.x = this.targetObject.prevX;
-            this.targetObject.y = this.targetObject.prevY;
-            this.status = 0; // 준비
-          }
-  
-        }
-
-      } else {
-
-        // for (let mon of this.$g.monsters){
-
-        //     for(let box of mon.collider.boxList) {
-  
-        //         //me 의 충돌박스
-        //         for(let mybox of this.targetObject.collider.boxList){
-      
-        //             if(this.$math.checkCrossBox(
-        //                 box[0], box[1], box[2], box[3],
-        //                 mybox[0], mybox[1], mybox[2], mybox[3],
-        //             )){
-        //                 this.targetObject.x = this.targetObject.prevX;
-        //                 this.targetObject.y = this.targetObject.prevY;
-        //                 this.status = 0; //준비
-        //                 return;
-        //             }
-      
-        //         }
-
-        //     }
-
-        // }
-
+      if (type && this.targetObject.collider[type]?.checkCollisionList(this.colliderListForCheck, type)) {
+        this.targetObject.x = this.targetObject.prevX;
+        this.targetObject.y = this.targetObject.prevY;
+        this.status = ActionMoveStatus.IDLE;
       }
+          
+    }
+
+    if (this.status !== ActionMoveStatus.IDLE && this.movex === this.targetObject.x && this.movey === this.targetObject.y) {
+
+      this.status = ActionMoveStatus.IDLE;
 
     }
 
-    if (this.status !== 0 && this.movex === this.targetObject.x && this.movey === this.targetObject.y) {
-
-      this.status = 0; // 준비
-
-    }
+    // draw position 설정
+    this.targetObject.setPosition(this.targetObject.x, this.targetObject.y);
 
   }
 
