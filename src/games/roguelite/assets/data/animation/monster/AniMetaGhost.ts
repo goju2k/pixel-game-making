@@ -1,6 +1,6 @@
 import { AnimationMeta } from '../../../../../../modules/draw/animation/AnimationMeta';
 
-export const AniMetaGhost:AnimationMeta<'pose'|'attack', 'ghost'> = {
+export const AniMetaGhost:AnimationMeta<'pose'|'attack'|'attacked', 'ghost'> = {
   spriteMap: {
     ghost: {
       src: 'characters/monster/ghost/ghost.png',
@@ -111,6 +111,21 @@ export const AniMetaGhost:AnimationMeta<'pose'|'attack', 'ghost'> = {
         },
         {
           pos: 23,
+          delay: 20,
+        },
+      ],
+    },
+    attacked: {
+      map: 'ghost',
+      loopCnt: 1,
+      delay: 200,
+      frames: [
+        {
+          pos: 24,
+          delay: 20,
+        },
+        {
+          pos: 25,
           delay: 20,
         },
       ],

@@ -20,6 +20,7 @@ export class Grass extends MeleeMonster {
       animation: { 
         pose: new Animation('animation/monster/AniMetaGrass.ts', 'pose'),
         attack: new Animation('animation/monster/AniMetaGrass.ts', 'attack'),
+        attacked: new Animation('animation/monster/AniMetaGrass.ts', 'attacked'),
       },
       stat: {
         life: 100,

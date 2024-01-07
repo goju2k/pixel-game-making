@@ -1,6 +1,6 @@
 import { AnimationMeta } from '../../../../../../modules/draw/animation/AnimationMeta';
 
-export const AniMetaDoltan:AnimationMeta<'pose'|'attack', 'doltan'> = {
+export const AniMetaDoltan:AnimationMeta<'pose'|'attack'|'attacked', 'doltan'> = {
   spriteMap: {
     doltan: {
       src: 'characters/monster/doltan/doltan.png',
@@ -103,7 +103,7 @@ export const AniMetaDoltan:AnimationMeta<'pose'|'attack', 'doltan'> = {
           delay: 130,
         },
         {
-          pos: 24,
+          pos: 28,
           delay: 2000,
         },
         // 폭발 프레임 끝
@@ -135,6 +135,21 @@ export const AniMetaDoltan:AnimationMeta<'pose'|'attack', 'doltan'> = {
         },
         // 다시 태어나기 끝
 
+      ],
+    },
+    attacked: {
+      map: 'doltan',
+      loopCnt: 1,
+      delay: 200,
+      frames: [
+        {
+          pos: 24,
+          delay: 20,
+        },
+        {
+          pos: 25,
+          delay: 20,
+        },
       ],
     },
   },

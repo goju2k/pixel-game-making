@@ -20,6 +20,7 @@ export class Ghost extends MeleeMonster {
       animation: { 
         pose: new Animation('animation/monster/AniMetaGhost.ts', 'pose'),
         attack: new Animation('animation/monster/AniMetaGhost.ts', 'attack'),
+        attacked: new Animation('animation/monster/AniMetaGhost.ts', 'attacked'),
       },
       stat: {
         life: 100,
