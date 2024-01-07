@@ -37,7 +37,7 @@ export class Particle extends ObjectBase {
   actionMove;
 
   // 충돌 데미지
-  damage:number = 1;
+  damage:number = 5;
 
   constructor(config:ParticleConfig) {
     

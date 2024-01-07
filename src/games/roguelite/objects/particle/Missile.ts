@@ -12,7 +12,7 @@ export class Missile extends Particle {
 
   nextTime:number = -1;
 
-  damage: number = 60;
+  damage: number = 25;
 
   constructor(config:ParticleConfig) {
 
