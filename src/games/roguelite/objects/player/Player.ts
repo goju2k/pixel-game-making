@@ -107,7 +107,7 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              speed: 50,
+              speed: 30,
               flipX: this.flipX,
               colliderListForCheck: context.monsterContext.list,
             }));
@@ -119,7 +119,7 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              speed: 100,
+              speed: 150,
               width: 2,
               height: 2,
               colliderListForCheck: context.monsterContext.list,

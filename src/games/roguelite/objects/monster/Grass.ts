@@ -12,10 +12,10 @@ export class Grass extends MeleeMonster {
       width: 16,
       height: 16,
       bodyColliderConfig: {
-        colliderWidth: 14,
+        colliderWidth: 6,
         colliderHeight: 6,
-        colliderOffsetX: 1,
-        colliderOffsetY: 9,
+        colliderOffsetX: 5,
+        colliderOffsetY: 5,
       },
       animation: { 
         pose: new Animation('animation/monster/AniMetaGrass.ts', 'pose'),

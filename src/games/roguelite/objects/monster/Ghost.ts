@@ -12,10 +12,10 @@ export class Ghost extends MeleeMonster {
       width: 16,
       height: 16,
       bodyColliderConfig: {
-        colliderWidth: 14,
-        colliderHeight: 6,
-        colliderOffsetX: 1,
-        colliderOffsetY: 9,
+        colliderWidth: 11,
+        colliderHeight: 8,
+        colliderOffsetX: 2,
+        colliderOffsetY: 4,
       },
       animation: { 
         pose: new Animation('animation/monster/AniMetaGhost.ts', 'pose'),

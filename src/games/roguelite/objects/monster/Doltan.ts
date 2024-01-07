@@ -47,15 +47,15 @@ export class Doltan extends ObjectBase {
     super({
       ...config,
       bodyColliderConfig: {
-        colliderWidth: 8,
+        colliderWidth: 9,
         colliderHeight: 6,
-        colliderOffsetX: 6,
+        colliderOffsetX: 2,
         colliderOffsetY: 7,
       },
     });
 
     // Collider debug
-    this.debugCollider = true;
+    // this.debugCollider = true;
 
   }
 

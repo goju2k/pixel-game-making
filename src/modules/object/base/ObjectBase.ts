@@ -126,8 +126,8 @@ export abstract class ObjectBase {
     }
 
     // 충돌박스 업데이트
-    this.collider.base && this.collider.base.update();
-    this.collider.body && this.collider.body.update();
+    this.collider.base && this.collider.base.update(this.flipX);
+    this.collider.body && this.collider.body.update(this.flipX);
 
   }
 
