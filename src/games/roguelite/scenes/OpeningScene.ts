@@ -1,7 +1,9 @@
+// import context from '../../../modules/draw/context/GlobalContext';
 import { ObjectBase } from '../../../modules/object/base/ObjectBase';
 import { SceneBase } from '../../../modules/scene/base/SceneBase';
 import { Doltan } from '../objects/monster/Doltan';
 import { Ghost } from '../objects/monster/Ghost';
+import { Grass } from '../objects/monster/Grass';
 import { Zag } from '../objects/monster/Zag';
 import { Player } from '../objects/player/Player';
 
@@ -12,7 +14,6 @@ export class OpeningScene extends SceneBase {
   
   player:Player = new Player({ x: 0, y: 0, width: 16, height: 16 });
 
-  // mosters:Zag[] = [ new Zag({ x: 100, y: 100, width: 16, height: 16 }) ];
   mosters:ObjectBase[] = [];
 
   timeTotal:number = 0;
@@ -66,6 +67,10 @@ export class OpeningScene extends SceneBase {
       this.mosters[i].draw();
     }
 
+    // context.objectContext.list.forEach((o) => {
+    //   o.draw();
+    // });
+
   }
 
   private gameStep() {
@@ -84,10 +89,13 @@ export class OpeningScene extends SceneBase {
     newMonsters.push(...Array.from(Array(nextCount)).map(() => new Doltan({ x: 100, y: 100, width: 16, height: 16 })));
 
     nextCount = Math.floor((Math.random() * count) + 1);
-    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Ghost({ x: 100, y: 100, width: 16, height: 16 })));
+    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Ghost()));
 
     nextCount = Math.floor((Math.random() * count) + 1);
-    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Zag({ x: 100, y: 100, width: 16, height: 16 })));
+    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Zag()));
+
+    nextCount = Math.floor((Math.random() * count) + 1);
+    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Grass()));
 
     newMonsters.forEach((mon) => {
       mon.setPosition(
