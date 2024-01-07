@@ -9,6 +9,13 @@ export enum ActionMoveStatus {
   MOVING = 1,
 }
 
+export type CallbackForCollision = (targets:ObjectBase[]) => void;
+export interface ActionMoveConfig {
+  targetObject:ObjectBase;
+  callbackForCollision?:CallbackForCollision;
+  colliderListForCheck?:ObjectBase|(ObjectBase[]);
+}
+
 export class ActionMove {
 
   targetObject!:ObjectBase;
@@ -41,7 +48,10 @@ export class ActionMove {
   speedMs!: number;
   speed!: number;
 
-  constructor(targetObject:ObjectBase, colliderListForCheck?:ObjectBase|(ObjectBase[])) {
+  // 충돌 체크
+  callbackForCollision;
+
+  constructor({ targetObject, callbackForCollision, colliderListForCheck }:ActionMoveConfig) {
 
     // 대상 object
     this.targetObject = targetObject;
@@ -54,6 +64,8 @@ export class ActionMove {
         this.colliderListForCheck.push(colliderListForCheck);
       }
     }
+
+    this.callbackForCollision = callbackForCollision;
     
     // 초기화
     this.initSpeed();
@@ -143,6 +155,9 @@ export class ActionMove {
       
       // 충돌체크
       if (type && this.targetObject.collider[type]?.checkCollisionList(this.colliderListForCheck, type)) {
+
+        this.callbackForCollision && this.callbackForCollision(this.targetObject.collider[type]?.checkCollisionListAll(this.colliderListForCheck, type) || []);
+
         this.targetObject.x = this.targetObject.prevX;
         this.targetObject.y = this.targetObject.prevY;
         this.status = ActionMoveStatus.IDLE;

@@ -109,10 +109,9 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              velocity: 0.07,
-              width: 2,
-              height: 2,
+              speed: 50,
               rotate: this.rotate,
+              colliderListForCheck: context.monsterContext.list,
             }));
 
           } else {
@@ -122,9 +121,10 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              velocity: 0.1,
+              speed: 100,
               width: 2,
               height: 2,
+              colliderListForCheck: context.monsterContext.list,
             }));
 
           }
@@ -217,6 +217,7 @@ export class Player extends ObjectBase {
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
       if (this.particles[i].end) {
+        this.particles[i].destroy();
         this.particles.splice(i, 1);
       } else {
         this.particles[i].step(time);  

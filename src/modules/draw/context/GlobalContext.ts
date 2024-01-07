@@ -17,6 +17,8 @@ class GlobalContext {
 
   objectContext: ObjectContext = new ObjectContext();
 
+  monsterContext: ObjectContext = new ObjectContext();
+
   width?: number;
 
   height?: number;

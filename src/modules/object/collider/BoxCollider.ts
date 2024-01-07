@@ -51,6 +51,16 @@ export class BoxCollider {
     return false;
   }
 
+  checkCollisionListAll(targetList:ObjectBase[], type:ColliderType = 'base') {
+    const list:ObjectBase[] = [];
+    for (const target of targetList) {
+      if (target !== this.target && this.checkCollisionWith(target, type)) {
+        list.push(target);
+      }
+    }
+    return list;
+  }
+
   checkCollisionWith(target:ObjectBase, type:ColliderType = 'base') {
     const targetCollider = target.collider[type];
     if (targetCollider) {

@@ -53,6 +53,9 @@ export abstract class ObjectBase {
   
   // 속도
   speed:number = 0;
+
+  // life
+  life:number = 0;
   
   constructor(config:ObjectBaseConfig) {
 

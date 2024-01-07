@@ -62,8 +62,11 @@ export class Doltan extends ObjectBase {
     
     super.init();
 
+    // global add
+    context.monsterContext.add(this);
+
     // player 타게팅    
-    this.actionChase = new ActionMove(this, context.playerContext);
+    this.actionChase = new ActionMove({ targetObject: this, colliderListForCheck: context.playerContext });
     this.setMoveTarget(context.playerContext.x, context.playerContext.y);
 
   }
@@ -119,7 +122,12 @@ export class Doltan extends ObjectBase {
   }
 
   destroy(): void {
+    
     super.destroy();
+
+    // global remove
+    context.monsterContext.remove(this);
+
   }
 
   private setMoveTarget(x:number, y:number) {

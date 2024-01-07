@@ -48,10 +48,15 @@ export class OpeningScene extends SceneBase {
     this.gameStep();
 
     // monsters
-    for (let i = 0; i < this.mosters.length; i++) {
-      this.mosters[i].step(time);
+    for (let i = this.mosters.length - 1; i >= 0; i--) {
+      if (this.mosters[i].life <= 0) {
+        this.mosters[i].destroy();
+        this.mosters.splice(i, 1);
+      } else {
+        this.mosters[i].step(time);
+      }
     }
-
+    
   }
 
   draw() {

@@ -14,6 +14,8 @@ export class Missile extends Particle {
 
   nextTime:number = -1;
 
+  damage: number = 60;
+
   constructor(config:ParticleConfig) {
     super(config);
     this.sprite = new Sprite('characters/projectiles/missile.png', 16, 16);
