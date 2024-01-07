@@ -1,4 +1,4 @@
-import { ArrayPoolUtil } from '../../util/object/ArrayPool';
+import { PhysicsUtil } from '../../util/math/Physics';
 import { ObjectBase } from '../base/ObjectBase';
 
 export type ColliderType = 'base'|'body'
@@ -54,36 +54,17 @@ export class BoxCollider {
   checkCollisionWith(target:ObjectBase, type:ColliderType = 'base') {
     const targetCollider = target.collider[type];
     if (targetCollider) {
-      return this.checkCollision(this, targetCollider) || this.checkCollision(targetCollider, this);
+      return PhysicsUtil.checkCrossBox(
+        this.x1, 
+        this.y1, 
+        this.width, 
+        this.height,
+        targetCollider.x1, 
+        targetCollider.y1, 
+        targetCollider.width, 
+        targetCollider.height,
+      );
     }
-    return false;
-  }
-
-  private checkCollision(source:BoxCollider, target:BoxCollider) {
-
-    const line = ArrayPoolUtil.ARRAY_2;
-    for (let i = 0, len = 4; i < len; i++) {
-  
-      if (i === 0) {
-        line[0] = source.x1;
-        line[1] = source.y1;
-      } else if (i === 1) {
-        line[0] = source.x2;
-        line[1] = source.y1;
-      } else if (i === 2) {
-        line[0] = source.x2;
-        line[1] = source.y2;
-      } else if (i === 3) {
-        line[0] = source.x1;
-        line[1] = source.y2;
-      }
-  
-      if (target.x2 >= line[0] && target.y2 >= line[1] && target.x1 <= line[0] && target.y1 <= line[1]) {
-        return true;
-      }
-  
-    }
-
     return false;
   }
 
