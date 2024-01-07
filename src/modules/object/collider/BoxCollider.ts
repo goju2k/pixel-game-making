@@ -26,9 +26,6 @@ export class BoxCollider {
 
   y2:number = 0;
 
-  // 반전여부
-  flipX = false;
-
   constructor(target:ObjectBase, width?:number, height?:number, offsetX?:number, offsetY?:number) {
     this.target = target;
     this.width = width || target.width;
@@ -38,11 +35,22 @@ export class BoxCollider {
     this.update();
   }
 
-  update() {
+  update(flipX?:boolean) {
     this.x1 = this.target.drawX + this.offsetX;
     this.x2 = this.target.drawX + this.offsetX + this.width;
     this.y1 = this.target.drawY + this.offsetY;
     this.y2 = this.target.drawY + this.offsetY + this.height;
+    this.updateFlipX(flipX);
+  }
+
+  updateFlipX(flipX?:boolean) {
+    if (flipX) {
+      const drawGapX1 = this.x1 - this.target.drawX;
+      const drawGapX2 = this.target.drawX + this.target.width - this.x2;
+      const deltaX = drawGapX2 - drawGapX1;
+      this.x1 += deltaX;
+      this.x2 += deltaX;
+    }
   }
 
   checkCollisionList(targetList:ObjectBase[], type:ColliderType = 'base') {

@@ -1,4 +1,3 @@
-// import context from '../../../modules/draw/context/GlobalContext';
 import { ObjectBase } from '../../../modules/object/base/ObjectBase';
 import { SceneBase } from '../../../modules/scene/base/SceneBase';
 import { Doltan } from '../objects/monster/Doltan';
@@ -7,16 +6,23 @@ import { Grass } from '../objects/monster/Grass';
 import { Zag } from '../objects/monster/Zag';
 import { Player } from '../objects/player/Player';
 
-// interface OpeningSceneConfig extends SceneBaseConfig {
-
-// }
 export class OpeningScene extends SceneBase {
   
-  player:Player = new Player({ x: 0, y: 0, width: 16, height: 16 });
+  config:Record<string, boolean> = {
+    initGen: true,
+    gen: true,
+    zag: true,
+    grass: true,
+    doltan: true,
+    ghost: true,
+  };
+
+  player:Player = new Player();
 
   mosters:ObjectBase[] = [];
 
   timeTotal:number = 0;
+  timeIterateCount:number = 0;
   
   init() {
 
@@ -25,7 +31,7 @@ export class OpeningScene extends SceneBase {
     this.player.setPosition(this.world.widthHalf, this.world.heightHalf);
     this.player.init();
 
-    this.generateMonster(1);
+    this.config.initGen && this.generateMonster(1);
     
     return this;
   }
@@ -45,7 +51,7 @@ export class OpeningScene extends SceneBase {
     this.player.step(time);
 
     // game 진행
-    // this.gameStep();
+    this.config.gen && this.gameStep();
 
     // monsters
     for (let i = this.mosters.length - 1; i >= 0; i--) {
@@ -56,7 +62,7 @@ export class OpeningScene extends SceneBase {
         this.mosters[i].step(time);
       }
     }
-    
+
   }
 
   draw() {
@@ -79,9 +85,13 @@ export class OpeningScene extends SceneBase {
   }
 
   private gameStep() {
-    if (this.timeTotal > 7000) {
+    const timeUnit = Math.max(2000, 7000 - (500 * Math.floor(this.timeIterateCount / 5 + 1)));
+    if (this.timeTotal > timeUnit) {
+      this.timeIterateCount += 1;
       this.timeTotal = 0;
-      this.generateMonster(Math.floor(Math.random() * 1));
+      
+      const multiple = Math.floor(this.timeIterateCount / 2 + 1);
+      this.generateMonster(Math.min(10, Math.floor(Math.random() * multiple)));
     }
   }
 
@@ -91,16 +101,16 @@ export class OpeningScene extends SceneBase {
     let nextCount = 0;
 
     nextCount = Math.floor((Math.random() * count) + 1);
-    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Doltan({ x: 100, y: 100, width: 16, height: 16 })));
+    this.config.doltan && newMonsters.push(...Array.from(Array(nextCount)).map(() => new Doltan({ x: 100, y: 100, width: 16, height: 16 })));
 
     nextCount = Math.floor((Math.random() * count) + 1);
-    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Ghost()));
+    this.config.ghost && newMonsters.push(...Array.from(Array(nextCount)).map(() => new Ghost()));
 
     nextCount = Math.floor((Math.random() * count) + 1);
-    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Zag()));
+    this.config.zag && newMonsters.push(...Array.from(Array(nextCount)).map(() => new Zag()));
 
     nextCount = Math.floor((Math.random() * count) + 1);
-    newMonsters.push(...Array.from(Array(nextCount)).map(() => new Grass()));
+    this.config.grass && newMonsters.push(...Array.from(Array(nextCount)).map(() => new Grass()));
 
     newMonsters.forEach((mon) => {
       mon.setPosition(

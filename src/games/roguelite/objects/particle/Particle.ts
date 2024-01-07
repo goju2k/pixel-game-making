@@ -3,6 +3,7 @@ import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/Ob
 import { ActionMove, ActionMoveStatus } from '../../actions/ActionMove';
 
 export interface ParticleConfig extends Omit<ObjectBaseConfig, 'width'|'height'> {
+  imageFlag?:boolean;
   width?:number;
   height?:number;
   targetX:number;
@@ -20,6 +21,9 @@ export enum ParticleStatus {
 
 export class Particle extends ObjectBase {
 
+  // image 여부
+  imageFlag = false;
+
   // particle status
   status:ParticleStatus = ParticleStatus.MOVING;
 
@@ -33,11 +37,11 @@ export class Particle extends ObjectBase {
   actionMove;
 
   // 충돌 데미지
-  damage:number = 1;
+  damage:number = 5;
 
   constructor(config:ParticleConfig) {
     
-    const { width = 1, height = 1 } = config;
+    const { width = 1, height = 1, imageFlag = false } = config;
     const {
       bodyColliderConfig = {
         colliderWidth: width,
@@ -48,6 +52,9 @@ export class Particle extends ObjectBase {
     } = config;
 
     super({ ...config, width, height, bodyColliderConfig });
+
+    // 이미지 사용 여부
+    this.imageFlag = imageFlag;
 
     // 투사체 속도 설정
     config.speed && (this.speed = config.speed);
@@ -88,7 +95,12 @@ export class Particle extends ObjectBase {
   }
 
   draw(): void {
-    context.renderContext?.fillRect2d(this.x, this.y, this.width, this.height, 'lightblue');
+
+    !this.imageFlag && context.renderContext?.fillRect2d(this.x, this.y, this.width, this.height, 'lightblue');
+    
+    // for object debug
+    super.draw();
+
   }
 
 }

@@ -94,13 +94,13 @@ export class Sprite {
     if (!this.imageLoaded) return;
     
     if (!g.renderContext) return;
-
+    
     g.renderContext.drawImage2d(
       this.image, 
       offset.offsetX, 
       offset.offsetY, 
       this.frameWidth, 
-      this.frameWidth, 
+      this.frameHeight, 
       x,
       y,
       this.scaleWidth, 

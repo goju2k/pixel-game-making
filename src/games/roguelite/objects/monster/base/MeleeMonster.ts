@@ -49,15 +49,7 @@ export class MeleeMonster extends ObjectBase {
 
   constructor(config:MeleeMonsterConfig) {
     
-    super({
-      ...config,
-      bodyColliderConfig: {
-        colliderWidth: 14,
-        colliderHeight: 6,
-        colliderOffsetX: 1,
-        colliderOffsetY: 9,
-      },
-    });
+    super({ ...config });
 
     // animation
     this.animation = config.animation;

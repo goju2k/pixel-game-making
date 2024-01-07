@@ -1,12 +1,8 @@
 import context from '../../../../modules/draw/context/GlobalContext';
 import { Sprite } from '../../../../modules/draw/image/Sprite';
-import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
+import { ObjectBase } from '../../../../modules/object/base/ObjectBase';
 import { Missile } from '../particle/Missile';
 import { Particle } from '../particle/Particle';
-
-interface PlayerConfig extends ObjectBaseConfig {
-  
-}
 
 export class Player extends ObjectBase {
   
@@ -22,10 +18,13 @@ export class Player extends ObjectBase {
 
   particles:Particle[] = [];
 
-  constructor(config:PlayerConfig) {
+  constructor() {
     
     super({
-      ...config,
+      x: 0,
+      y: 0,
+      width: 18,
+      height: 18,
       colliderConfig: {
         colliderWidth: 8,
         colliderHeight: 4,
@@ -107,7 +106,7 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              speed: 50,
+              speed: 30,
               flipX: this.flipX,
               colliderListForCheck: context.monsterContext.list,
             }));
@@ -119,7 +118,7 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              speed: 100,
+              speed: 150,
               width: 2,
               height: 2,
               colliderListForCheck: context.monsterContext.list,
