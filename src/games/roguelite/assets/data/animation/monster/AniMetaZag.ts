@@ -1,6 +1,6 @@
 import { AnimationMeta } from '../../../../../../modules/draw/animation/AnimationMeta';
 
-export const AniMetaZag:AnimationMeta<'pose'|'attack', 'zag'|'zag2'> = {
+export const AniMetaZag:AnimationMeta<'pose'|'attack'|'attacked', 'zag'|'zag2'> = {
   spriteMap: {
     zag: {
       src: 'characters/monster/zag/zag.png',
@@ -60,6 +60,21 @@ export const AniMetaZag:AnimationMeta<'pose'|'attack', 'zag'|'zag2'> = {
         },
         {
           pos: 6,
+          delay: 20,
+        },
+      ],
+    },
+    attacked: {
+      map: 'zag',
+      loopCnt: 1,
+      delay: 200,
+      frames: [
+        {
+          pos: 4,
+          delay: 20,
+        },
+        {
+          pos: 5,
           delay: 20,
         },
       ],

@@ -8,6 +8,7 @@ export interface MeleeMonsterConfig extends ObjectBaseConfig {
   animation:{
     pose: Animation;
     attack: Animation;
+    attacked: Animation;
   };
   stat?:{
     life?: number;
@@ -103,14 +104,21 @@ export class MeleeMonster extends ObjectBase {
         this.flipX = this.x - context.playerContext.x <= 0;
         this.animation.attack.step(time);
         break;
-    
+      case MeleeMonsterStatus.ATTACKED:
+        this.animation.attacked.step(time);
+        break;
       default:
         break;
     }
     
-    if (this.collider.body?.checkCollisionWith(context.playerContext, 'body')) {
+    if (this.status === MeleeMonsterStatus.ATTACKED) {
+      if (!this.animation.attacked.playing) {
+        this.status = MeleeMonsterStatus.CHASE_ENEMY;
+        this.animation.attack.setAnimation('attack', true);  
+      }
+    } else if (this.collider.body?.checkCollisionWith(context.playerContext, 'body')) {
       this.status = MeleeMonsterStatus.ATTACKING;
-    } else {
+    } else if (this.status === MeleeMonsterStatus.ATTACKING) {
       this.status = MeleeMonsterStatus.CHASE_ENEMY;
       this.animation.attack.setAnimation('attack', true);
     }
@@ -127,7 +135,9 @@ export class MeleeMonster extends ObjectBase {
       case MeleeMonsterStatus.ATTACKING:
         this.animation.attack.draw(this.drawX, this.drawY, this.flipX);
         break;
-    
+      case MeleeMonsterStatus.ATTACKED:
+        this.animation.attacked.draw(this.drawX, this.drawY, this.flipX);
+        break;
       default:
         break;
     }
@@ -144,6 +154,12 @@ export class MeleeMonster extends ObjectBase {
     // global remove
     context.monsterContext.remove(this);
     
+  }
+
+  setLife(life:number) {
+    super.setLife(life);
+    this.status = MeleeMonsterStatus.ATTACKED;
+    this.animation.attacked.setAnimation('attacked', true);
   }
 
   private setMoveTarget(x:number, y:number) {

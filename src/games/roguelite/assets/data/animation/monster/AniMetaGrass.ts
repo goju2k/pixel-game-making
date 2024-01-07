@@ -1,6 +1,6 @@
 import { AnimationMeta } from '../../../../../../modules/draw/animation/AnimationMeta';
 
-export const AniMetaZag:AnimationMeta<'pose'|'attack', 'grass'> = {
+export const AniMetaZag:AnimationMeta<'pose'|'attack'|'attacked', 'grass'> = {
   spriteMap: {
     grass: {
       src: 'characters/monster/grass/grass.png',
@@ -42,6 +42,21 @@ export const AniMetaZag:AnimationMeta<'pose'|'attack', 'grass'> = {
             delay,
           };
         }),
+      ],
+    },
+    attacked: {
+      map: 'grass',
+      loopCnt: 1,
+      delay: 200,
+      frames: [
+        {
+          pos: 26,
+          delay: 20,
+        },
+        {
+          pos: 27,
+          delay: 20,
+        },
       ],
     },
   },

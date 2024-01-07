@@ -21,6 +21,7 @@ export class Zag extends MeleeMonster {
       animation: { 
         pose: new Animation('animation/monster/AniMetaZag.ts', 'pose'),
         attack: new Animation('animation/monster/AniMetaZag.ts', 'attack'),
+        attacked: new Animation('animation/monster/AniMetaZag.ts', 'attacked'),
       },
       stat: {
         life: 100,
