@@ -10,8 +10,6 @@ export class Missile extends Particle {
 
   tileNo:number = 1;
 
-  rotate:1|-1 = 1;
-
   nextTime:number = -1;
 
   damage: number = 60;
@@ -25,7 +23,7 @@ export class Missile extends Particle {
 
     this.x += (config.x - config.targetX > 0 ? -8 : -4);
     this.y -= 5;
-    config.rotate && (this.rotate = config.rotate);
+    config.flipX && (this.flipX = config.flipX);
   }
 
   step(time: number): void {
@@ -53,7 +51,7 @@ export class Missile extends Particle {
     
     if (!this.loaded) return;
     
-    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.rotate);
+    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.flipX);
 
   }
 

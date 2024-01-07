@@ -45,7 +45,7 @@ export class OpeningScene extends SceneBase {
     this.player.step(time);
 
     // game 진행
-    this.gameStep();
+    // this.gameStep();
 
     // monsters
     for (let i = this.mosters.length - 1; i >= 0; i--) {

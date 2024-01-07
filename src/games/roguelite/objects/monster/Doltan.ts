@@ -33,12 +33,13 @@ export class Doltan extends ObjectBase {
   actionChase!:ActionMove;
 
   // draw stat
-  flipX:1|-1 = 1;
+  flipX = false;
   
   // animation assets
   animation = { 
     pose: new Animation('animation/monster/AniMetaDoltan.ts', 'pose'),
     attack: new Animation('animation/monster/AniMetaDoltan.ts', 'attack'),
+    attacked: new Animation('animation/monster/AniMetaDoltan.ts', 'attacked'),
   };
 
   constructor(config:DoltanConfig) {
@@ -46,15 +47,15 @@ export class Doltan extends ObjectBase {
     super({
       ...config,
       bodyColliderConfig: {
-        colliderWidth: 14,
+        colliderWidth: 8,
         colliderHeight: 6,
-        colliderOffsetX: 1,
-        colliderOffsetY: 9,
+        colliderOffsetX: 6,
+        colliderOffsetY: 7,
       },
     });
 
     // Collider debug
-    // this.debugCollider = true;
+    this.debugCollider = true;
 
   }
 
@@ -72,7 +73,7 @@ export class Doltan extends ObjectBase {
   }
   
   step(time: number) {
-    
+
     // 상태별 애니메이션 선택
     switch (this.status) {
       case DoltanStatus.CHASE_ENEMY:
@@ -81,20 +82,26 @@ export class Doltan extends ObjectBase {
         // action 계산
         this.actionChase.next(time, 'body');
         // 기본 animation
-        this.flipX = this.actionChase.moveDirectionH ? -1 : 1; // 방향 설정
         this.animation.pose.step(time);
         break;
       case DoltanStatus.ATTACKING:
         this.animation.attack.step(time);
         break;
-    
+      case DoltanStatus.ATTACKED:
+        this.animation.attacked.step(time);
+        break;
       default:
         break;
     }
     
-    if (this.collider.body?.checkCollisionWith(context.playerContext, 'body')) {
+    if (this.status === DoltanStatus.ATTACKED) {
+      if (!this.animation.attacked.playing) {
+        this.status = DoltanStatus.CHASE_ENEMY;
+        this.animation.attack.setAnimation('attack', true);  
+      }
+    } else if (this.collider.body?.checkCollisionWith(context.playerContext, 'body')) {
       this.status = DoltanStatus.ATTACKING;
-    } else {
+    } else if (this.status === DoltanStatus.ATTACKING) {
       this.status = DoltanStatus.CHASE_ENEMY;
       this.animation.attack.setAnimation('attack', true);
     }
@@ -111,7 +118,9 @@ export class Doltan extends ObjectBase {
       case DoltanStatus.ATTACKING:
         this.animation.attack.draw(this.drawX, this.drawY, this.flipX);
         break;
-    
+      case DoltanStatus.ATTACKED:
+        this.animation.attacked.draw(this.drawX, this.drawY, this.flipX);
+        break;
       default:
         break;
     }
@@ -128,6 +137,12 @@ export class Doltan extends ObjectBase {
     // global remove
     context.monsterContext.remove(this);
 
+  }
+
+  setLife(life:number) {
+    super.setLife(life);
+    this.status = DoltanStatus.ATTACKED;
+    this.animation.attacked.setAnimation('attacked', true);
   }
 
   private setMoveTarget(x:number, y:number) {

@@ -41,7 +41,7 @@ export class MeleeMonster extends ObjectBase {
   actionChase!:ActionMove;
 
   // draw stat
-  flipX:1|-1 = 1;
+  flipX = false;
   
   // animation assets
   animation;
@@ -96,12 +96,11 @@ export class MeleeMonster extends ObjectBase {
         // action 계산
         this.actionChase.next(time, 'body');
         // 기본 animation
-        this.flipX = this.actionChase.moveDirectionH ? -1 : 1; // 방향 설정
         this.animation.pose.step(time);
         break;
       case MeleeMonsterStatus.ATTACKING:
         // 공격 방향 체크 for flipX
-        this.flipX = this.x - context.playerContext.x > 0 ? 1 : -1;
+        this.flipX = this.x - context.playerContext.x <= 0;
         this.animation.attack.step(time);
         break;
     

@@ -8,7 +8,7 @@ export interface ParticleConfig extends Omit<ObjectBaseConfig, 'width'|'height'>
   targetX:number;
   targetY:number;
   speed?:number; // pixel / ms
-  rotate?:1|-1;
+  flipX?:boolean;
   colliderListForCheck?:ObjectBase|(ObjectBase[]);
 }
 
@@ -33,7 +33,7 @@ export class Particle extends ObjectBase {
   actionMove;
 
   // 충돌 데미지
-  damage:number = 20;
+  damage:number = 1;
 
   constructor(config:ParticleConfig) {
     
@@ -69,7 +69,7 @@ export class Particle extends ObjectBase {
       colliderListForCheck: config.colliderListForCheck,
       callbackForCollision: (list) => {
         list.forEach((target) => {
-          target.life -= this.damage;
+          target.setLife(this.damage * -1);
         });
       }, 
     });

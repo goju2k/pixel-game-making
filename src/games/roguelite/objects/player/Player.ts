@@ -16,8 +16,6 @@ export class Player extends ObjectBase {
 
   tileNo:number = 1;
 
-  rotate:1|-1 = 1;
-
   nextTime:number = 0;
 
   status:'init'|'run'|'attack' = 'init';
@@ -78,7 +76,7 @@ export class Player extends ObjectBase {
 
       // 공격 방향 정하기
       const delta = context.renderContext ? this.x + context.renderContext.translatedX - context.keyContext.MouseX : 0;
-      this.rotate = delta > 0 ? -1 : 1;
+      this.flipX = delta <= 0;
       
       // 공격 애니메이션
       if (this.status !== 'attack') {
@@ -110,7 +108,7 @@ export class Player extends ObjectBase {
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
               speed: 50,
-              rotate: this.rotate,
+              flipX: this.flipX,
               colliderListForCheck: context.monsterContext.list,
             }));
 
@@ -153,10 +151,10 @@ export class Player extends ObjectBase {
         // x축 이동 체크
         if (context.keyContext.KeyA) {
           moveX -= nextDis;
-          this.rotate = -1;
+          this.flipX = false;
         } else if (context.keyContext.KeyD) {
           moveX += nextDis;
-          this.rotate = 1;
+          this.flipX = true;
         }
         this.setPosition(moveX);
       
@@ -233,7 +231,7 @@ export class Player extends ObjectBase {
     
     if (!this.loaded) return;
 
-    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.rotate);
+    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.flipX);
 
     this.particles.forEach((p) => {
       p.draw();

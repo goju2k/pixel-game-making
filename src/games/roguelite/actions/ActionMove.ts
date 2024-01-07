@@ -173,6 +173,8 @@ export class ActionMove {
 
     // draw position 설정
     this.targetObject.setPosition(this.targetObject.x, this.targetObject.y);
+    // 방형 설정
+    this.targetObject.flipX = this.moveDirectionH;
 
   }
 

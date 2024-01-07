@@ -161,7 +161,7 @@ export class Animation {
 
   }
 
-  draw(x:number, y:number, flipX?:1|-1) {
+  draw(x:number, y:number, flipX?:boolean) {
 
     // console.log('this.gapTime=>'+gapTime);
     if (!this.dataLoaded || !this.playing) {
