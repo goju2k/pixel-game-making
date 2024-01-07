@@ -1,12 +1,8 @@
 import context from '../../../../modules/draw/context/GlobalContext';
 import { Sprite } from '../../../../modules/draw/image/Sprite';
-import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
+import { ObjectBase } from '../../../../modules/object/base/ObjectBase';
 import { Missile } from '../particle/Missile';
 import { Particle } from '../particle/Particle';
-
-interface PlayerConfig extends ObjectBaseConfig {
-  
-}
 
 export class Player extends ObjectBase {
   
@@ -22,10 +18,13 @@ export class Player extends ObjectBase {
 
   particles:Particle[] = [];
 
-  constructor(config:PlayerConfig) {
+  constructor() {
     
     super({
-      ...config,
+      x: 0,
+      y: 0,
+      width: 18,
+      height: 18,
       colliderConfig: {
         colliderWidth: 8,
         colliderHeight: 4,
