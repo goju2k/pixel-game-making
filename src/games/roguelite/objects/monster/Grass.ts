@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { MeleeMonster } from './base/MeleeMonster';
 
 import { Animation } from '../../../../modules/draw/animation/Animation';
 
-export class Zag extends MeleeMonster {
+export class Grass extends MeleeMonster {
   
   constructor() {
     
@@ -19,12 +18,12 @@ export class Zag extends MeleeMonster {
         colliderOffsetY: 9,
       },
       animation: { 
-        pose: new Animation('animation/monster/AniMetaZag.ts', 'pose'),
-        attack: new Animation('animation/monster/AniMetaZag.ts', 'attack'),
+        pose: new Animation('animation/monster/AniMetaGrass.ts', 'pose'),
+        attack: new Animation('animation/monster/AniMetaGrass.ts', 'attack'),
       },
       stat: {
         life: 100,
-        speed: 35,
+        speed: 15,
         visibleRadius: 50,
       },
     });
@@ -33,5 +32,5 @@ export class Zag extends MeleeMonster {
     // this.debugCollider = true;
 
   }
- 
+
 }
