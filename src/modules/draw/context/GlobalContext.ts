@@ -2,6 +2,7 @@
 
 import { KeyContext } from './KeyContext';
 import { ObjectContext } from './ObjectContext';
+import { TextContext } from './TextContext';
 
 import { Player } from '../../../games/roguelite/objects/player/Player';
 import { Camera } from '../../camera/Camera';
@@ -18,6 +19,8 @@ class GlobalContext {
   objectContext: ObjectContext = new ObjectContext();
 
   monsterContext: ObjectContext = new ObjectContext();
+
+  textContext: TextContext = new TextContext();
 
   width?: number;
 
