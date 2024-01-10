@@ -14,6 +14,7 @@ export interface GameRenderingContext {
   isMobile:()=>boolean;
   setMobile:(isMobile:boolean)=>void;
   clear2d:()=>void;
+  fillText2d:(x:number, y:number, text:string, color?:string, font?:string)=>void;
   fillRect2d:(x:number, y:number, width:number, height:number, color?:string, alpha?:number)=>void;
   drawImage2d:(image: ImageSource, sx: number, sy: number, sWidth:number, sHeight:number, dx: number, dy: number, dWidth:number, dHeight:number, flipX?:FlipType, flipY?:FlipType, _rotate?:number)=>void;
   translate2d:(x:number, y:number)=>void;
@@ -109,6 +110,12 @@ export class Canvas2dApi implements GameRenderingContext {
     // flip 복귀
     if (flipX || flipY) this.ctx.restore();
     
+  }
+
+  fillText2d(x:number, y:number, text:string, color?:string, font?:string) {
+    color && (this.ctx.fillStyle = color);
+    font && (this.ctx.font = font);
+    this.ctx.fillText(text, x, y);
   }
 
   translate2d(x:number, y:number) {

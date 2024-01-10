@@ -1,6 +1,7 @@
 import context from '../../../../modules/draw/context/GlobalContext';
 import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
 import { ActionMove, ActionMoveStatus } from '../../actions/ActionMove';
+import { TextBase } from '../text/TextBase';
 
 export interface ParticleConfig extends Omit<ObjectBaseConfig, 'width'|'height'> {
   imageFlag?:boolean;
@@ -37,7 +38,7 @@ export class Particle extends ObjectBase {
   actionMove;
 
   // 충돌 데미지
-  damage:number = 5;
+  damage:number = 20;
 
   constructor(config:ParticleConfig) {
     
@@ -76,7 +77,15 @@ export class Particle extends ObjectBase {
       colliderListForCheck: config.colliderListForCheck,
       callbackForCollision: (list) => {
         list.forEach((target) => {
-          target.setLife(this.damage * -1);
+          const { isCritical, damage } = this.getDamage();
+          context.textContext.add(new TextBase({
+            x: this.x,
+            y: this.y,
+            text: String(damage),
+            color: isCritical ? 'yellow' : 'white',
+            size: isCritical ? '15px' : '10px',
+          }));
+          target.setLife(damage * -1);
         });
       }, 
     });
@@ -101,6 +110,14 @@ export class Particle extends ObjectBase {
     // for object debug
     super.draw();
 
+  }
+
+  getDamage() {
+    const isCritical = Math.random() < 0.2;
+    return {
+      isCritical, 
+      damage: isCritical ? Math.floor(this.damage + Math.random() * this.damage * 100) : this.damage + Math.floor(Math.random() * this.damage),
+    };
   }
 
 }

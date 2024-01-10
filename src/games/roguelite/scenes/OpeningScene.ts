@@ -1,3 +1,4 @@
+import context from '../../../modules/draw/context/GlobalContext';
 import { ObjectBase } from '../../../modules/object/base/ObjectBase';
 import { SceneBase } from '../../../modules/scene/base/SceneBase';
 import { Doltan } from '../objects/monster/Doltan';
@@ -63,6 +64,16 @@ export class OpeningScene extends SceneBase {
       }
     }
 
+    // text
+    for (let i = context.textContext.list.length - 1; i >= 0; i--) {
+      if (context.textContext.list[i].end) {
+        context.textContext.list[i].destroy();
+        context.textContext.list.splice(i, 1);
+      } else {
+        context.textContext.list[i].step(time);
+      }
+    }
+
   }
 
   draw() {
@@ -78,9 +89,9 @@ export class OpeningScene extends SceneBase {
       this.mosters[i].draw();
     }
 
-    // context.objectContext.list.forEach((o) => {
-    //   o.draw();
-    // });
+    context.textContext.list.forEach((o) => {
+      o.draw();
+    });
 
   }
 
