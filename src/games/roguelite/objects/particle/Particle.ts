@@ -1,33 +1,66 @@
 import context from '../../../../modules/draw/context/GlobalContext';
 import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
+import { ActionMove, ActionMoveStatus } from '../../actions/ActionMove';
+import { TextBase } from '../text/TextBase';
 
-export interface ParticleConfig extends ObjectBaseConfig{
+export interface ParticleConfig extends Omit<ObjectBaseConfig, 'width'|'height'> {
+  imageFlag?:boolean;
+  width?:number;
+  height?:number;
   targetX:number;
   targetY:number;
-  velocity?:number; // pixel / ms
-  rotate?:1|-1;
+  speed?:number; // pixel / ms
+  flipX?:boolean;
+  colliderListForCheck?:ObjectBase|(ObjectBase[]);
+}
+
+export enum ParticleStatus {
+  MOVING=0,
+  HIT=1,
+  END=2,
 }
 
 export class Particle extends ObjectBase {
 
-  ratio:number = 0;
+  // image 여부
+  imageFlag = false;
 
-  velocity:number = 0.05;
-  
-  targetDis:number = 0;
-  
-  targetX:number = 0;
+  // particle status
+  status:ParticleStatus = ParticleStatus.MOVING;
 
-  targetY:number = 0;
+  // 충돌 대상
+  colliderListForCheck?:ObjectBase|(ObjectBase[]);
 
+  // 종료 여부
   end:boolean = false;
+
+  // 이동 액션 클래스
+  actionMove;
+
+  // 충돌 데미지
+  damage:number = 20;
 
   constructor(config:ParticleConfig) {
     
-    super({ ...config });
+    const { width = 1, height = 1, imageFlag = false } = config;
+    const {
+      bodyColliderConfig = {
+        colliderWidth: width,
+        colliderHeight: height,
+        colliderOffsetX: 0,
+        colliderOffsetY: 0,
+      }, 
+    } = config;
 
-    config.velocity && (this.velocity = config.velocity);
+    super({ ...config, width, height, bodyColliderConfig });
 
+    // 이미지 사용 여부
+    this.imageFlag = imageFlag;
+
+    // 투사체 속도 설정
+    config.speed && (this.speed = config.speed);
+
+    // 대상 목표 계산
     this.x += (config.x - config.targetX > 0 ? -6 : 6);
     this.y -= 8;
     
@@ -35,29 +68,56 @@ export class Particle extends ObjectBase {
     const deltaY = this.y - config.targetY;
 
     // 타겟을 화면 바깥으로 설정
-    this.targetX = config.targetX + (240 * (deltaX > 0 ? -1 : 1));
-    this.targetY = config.targetY + (240 * (deltaX > 0 ? -1 : 1) * (deltaY / deltaX));
+    const targetX = config.targetX + (240 * (deltaX > 0 ? -1 : 1));
+    const targetY = config.targetY + (240 * (deltaX > 0 ? -1 : 1) * (deltaY / deltaX));
 
-    this.targetDis = Math.sqrt(Math.abs(config.x - this.targetX) ** 2 + Math.abs(config.y - this.targetY) ** 2);
+    // action 생성 및 목표 설정
+    this.actionMove = new ActionMove({
+      targetObject: this,
+      colliderListForCheck: config.colliderListForCheck,
+      callbackForCollision: (list) => {
+        list.forEach((target) => {
+          const { isCritical, damage } = this.getDamage();
+          context.textContext.add(new TextBase({
+            x: this.x,
+            y: this.y,
+            text: String(damage),
+            color: isCritical ? 'yellow' : 'white',
+            size: isCritical ? '15px' : '10px',
+          }));
+          target.setLife(damage * -1);
+        });
+      }, 
+    });
+    this.actionMove.setMoveTarget(targetX, targetY);
 
   }
 
   step(time: number): void {
     
-    const dis = time * this.velocity;
-    this.ratio = dis / this.targetDis;
+    // 다음 action 계산
+    this.actionMove.next(time, 'body');
 
-    this.setPosition(this.x + ((this.targetX - this.x) * this.ratio), this.y + ((this.targetY - this.y) * this.ratio));
-
-    this.targetDis -= dis;
-    
-    this.end = this.targetDis < 0;
+    // 종료여부 체크
+    this.end = this.actionMove.status === ActionMoveStatus.IDLE;
 
   }
 
   draw(): void {
-    // ((global.renderContext?.ctx) as CanvasRenderingContext2D)
-    context.renderContext?.fillRect2d(this.x, this.y, 1, 1, 'lightblue');
+
+    !this.imageFlag && context.renderContext?.fillRect2d(this.x, this.y, this.width, this.height, 'lightblue');
+    
+    // for object debug
+    super.draw();
+
+  }
+
+  getDamage() {
+    const isCritical = Math.random() < 0.2;
+    return {
+      isCritical, 
+      damage: isCritical ? Math.floor(this.damage + Math.random() * this.damage * 100) : this.damage + Math.floor(Math.random() * this.damage),
+    };
   }
 
 }

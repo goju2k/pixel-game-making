@@ -67,7 +67,7 @@ export class Sprite {
 
   }
 
-  drawNo(x:number, y:number, no:number, flipX?:1|-1) {
+  drawNo(x:number, y:number, no:number, flipX?:boolean) {
 
     // 프레임 존재 체크
     if (!this.framesNo[no]) {
@@ -78,7 +78,7 @@ export class Sprite {
 
   }
 
-  draw(x:number, y:number, frameX:number, frameY:number, flipX?:1|-1) {
+  draw(x:number, y:number, frameX:number, frameY:number, flipX?:boolean) {
 
     // 프레임 존재 체크
     if (!this.frames[frameX] || !this.frames[frameX][frameY]) {
@@ -89,23 +89,23 @@ export class Sprite {
 
   }
 
-  private drawMain(x:number, y:number, offset:FrameOffset, flipX?:1|-1) {
+  private drawMain(x:number, y:number, offset:FrameOffset, flipX?:boolean) {
     
     if (!this.imageLoaded) return;
     
     if (!g.renderContext) return;
-
+    
     g.renderContext.drawImage2d(
       this.image, 
       offset.offsetX, 
       offset.offsetY, 
       this.frameWidth, 
-      this.frameWidth, 
+      this.frameHeight, 
       x,
       y,
       this.scaleWidth, 
       this.scaleHeight,
-      flipX,
+      flipX ? -1 : 1,
     );
 
   }

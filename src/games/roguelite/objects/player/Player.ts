@@ -1,12 +1,8 @@
 import context from '../../../../modules/draw/context/GlobalContext';
 import { Sprite } from '../../../../modules/draw/image/Sprite';
-import { ObjectBase, ObjectBaseConfig } from '../../../../modules/object/base/ObjectBase';
+import { ObjectBase } from '../../../../modules/object/base/ObjectBase';
 import { Missile } from '../particle/Missile';
 import { Particle } from '../particle/Particle';
-
-interface PlayerConfig extends ObjectBaseConfig {
-  
-}
 
 export class Player extends ObjectBase {
   
@@ -16,18 +12,19 @@ export class Player extends ObjectBase {
 
   tileNo:number = 1;
 
-  rotate:1|-1 = 1;
-
   nextTime:number = 0;
 
   status:'init'|'run'|'attack' = 'init';
 
   particles:Particle[] = [];
 
-  constructor(config:PlayerConfig) {
+  constructor() {
     
     super({
-      ...config,
+      x: 0,
+      y: 0,
+      width: 18,
+      height: 18,
       colliderConfig: {
         colliderWidth: 8,
         colliderHeight: 4,
@@ -78,7 +75,7 @@ export class Player extends ObjectBase {
 
       // 공격 방향 정하기
       const delta = context.renderContext ? this.x + context.renderContext.translatedX - context.keyContext.MouseX : 0;
-      this.rotate = delta > 0 ? -1 : 1;
+      this.flipX = delta <= 0;
       
       // 공격 애니메이션
       if (this.status !== 'attack') {
@@ -109,10 +106,9 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              velocity: 0.07,
-              width: 2,
-              height: 2,
-              rotate: this.rotate,
+              speed: 30,
+              flipX: this.flipX,
+              colliderListForCheck: context.monsterContext.list,
             }));
 
           } else {
@@ -122,9 +118,10 @@ export class Player extends ObjectBase {
               y: this.y,
               targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
               targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              velocity: 0.1,
+              speed: 150,
               width: 2,
               height: 2,
+              colliderListForCheck: context.monsterContext.list,
             }));
 
           }
@@ -153,10 +150,10 @@ export class Player extends ObjectBase {
         // x축 이동 체크
         if (context.keyContext.KeyA) {
           moveX -= nextDis;
-          this.rotate = -1;
+          this.flipX = false;
         } else if (context.keyContext.KeyD) {
           moveX += nextDis;
-          this.rotate = 1;
+          this.flipX = true;
         }
         this.setPosition(moveX);
       
@@ -217,6 +214,7 @@ export class Player extends ObjectBase {
 
     for (let i = this.particles.length - 1; i >= 0; i--) {
       if (this.particles[i].end) {
+        this.particles[i].destroy();
         this.particles.splice(i, 1);
       } else {
         this.particles[i].step(time);  
@@ -232,7 +230,7 @@ export class Player extends ObjectBase {
     
     if (!this.loaded) return;
 
-    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.rotate);
+    this.sprite.drawNo(this.drawX, this.drawY, this.tileNo, this.flipX);
 
     this.particles.forEach((p) => {
       p.draw();

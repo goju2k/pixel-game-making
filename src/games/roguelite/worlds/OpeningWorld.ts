@@ -19,7 +19,7 @@ export class OpeningWorld extends WorldBase {
     // 월드 크기 설정
     super({
       numberOfTiles: [ 16, 16 ],
-      tileSize: 16,
+      tileSize: 15,
     });
 
     console.log('world size', this.width, this.height);
