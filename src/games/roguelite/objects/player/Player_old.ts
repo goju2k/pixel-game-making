@@ -42,7 +42,7 @@ export class Player extends ObjectBase {
     // Collider debug
     // this.debugCollider = true;
 
-    this.sprite = new Sprite('characters/player.png', 18, 18);
+    this.sprite = new Sprite('characters/soldier.png', 18, 18);
     Promise.all([ this.sprite.load() ]).then(() => {
       this.loaded = true;
     });
@@ -208,20 +208,6 @@ export class Player extends ObjectBase {
           this.nextTime = -1;
           this.tileNo = 1;
           this.status = 'init';
-        }
-
-        // idle
-        if (this.nextTime === -1) {
-          this.tileNo = 1;
-          this.nextTime += time;
-        } else if (this.nextTime > 150) {
-          this.nextTime = 0;
-          this.tileNo += 1;
-          if (this.tileNo === 11) {
-            this.tileNo = 1;
-          }
-        } else {
-          this.nextTime += time;
         }
 
       }
