@@ -14,6 +14,7 @@ export interface ActionMoveConfig {
   targetObject:ObjectBase;
   callbackForCollision?:CallbackForCollision;
   colliderListForCheck?:ObjectBase|(ObjectBase[]);
+  forceMoveWhenCollision?:boolean;
 }
 
 export class ActionMove {
@@ -48,10 +49,12 @@ export class ActionMove {
   speedMs!: number;
   speed!: number;
 
+  forceMoveWhenCollision: boolean = false;
+
   // 충돌 체크
   callbackForCollision;
 
-  constructor({ targetObject, callbackForCollision, colliderListForCheck }:ActionMoveConfig) {
+  constructor({ targetObject, callbackForCollision, colliderListForCheck, forceMoveWhenCollision = false }:ActionMoveConfig) {
 
     // 대상 object
     this.targetObject = targetObject;
@@ -64,6 +67,9 @@ export class ActionMove {
         this.colliderListForCheck.push(colliderListForCheck);
       }
     }
+
+    // 충돌시 옵션
+    this.forceMoveWhenCollision = forceMoveWhenCollision;
 
     this.callbackForCollision = callbackForCollision;
     
@@ -158,9 +164,11 @@ export class ActionMove {
 
         this.callbackForCollision && this.callbackForCollision(this.targetObject.collider[type]?.checkCollisionListAll(this.colliderListForCheck, type) || []);
 
-        this.targetObject.x = this.targetObject.prevX;
-        this.targetObject.y = this.targetObject.prevY;
-        this.status = ActionMoveStatus.IDLE;
+        if (!this.forceMoveWhenCollision) {
+          this.targetObject.x = this.targetObject.prevX;
+          this.targetObject.y = this.targetObject.prevY;
+          this.status = ActionMoveStatus.IDLE;
+        }
       }
           
     }

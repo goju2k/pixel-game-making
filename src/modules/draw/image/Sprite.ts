@@ -116,7 +116,7 @@ export class Sprite {
 
       getImage(this.imageSrc).then((image) => {
         
-        console.log(`${this.imageSrc} loaded!!!`);
+        // console.log(`${this.imageSrc} loaded!!!`);
         this.image = image;
     
         // 프레임 처리

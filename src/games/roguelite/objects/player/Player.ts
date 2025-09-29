@@ -1,6 +1,7 @@
 import context from '../../../../modules/draw/context/GlobalContext';
 import { Sprite } from '../../../../modules/draw/image/Sprite';
 import { ObjectBase } from '../../../../modules/object/base/ObjectBase';
+import { FireBall } from '../particle/FireBall';
 import { Missile } from '../particle/Missile';
 import { Particle } from '../particle/Particle';
 
@@ -101,15 +102,34 @@ export class Player extends ObjectBase {
           // 총알 쏘자
           if (context.keyContext.MouseRight) {
 
-            this.particles.push(new Missile({
-              x: this.x,
-              y: this.y,
-              targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
-              targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
-              speed: 30,
-              flipX: this.flipX,
-              colliderListForCheck: context.monsterContext.list,
-            }));
+            if (Math.random() <= 0.2) {
+
+              this.particles.push(new FireBall({
+                x: this.x,
+                y: this.y,
+                targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
+                targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
+                speed: 80,
+                flipX: this.flipX,
+                colliderListForCheck: context.monsterContext.list,
+                critical: 0.4,
+                penetration: true,
+              }));
+
+            } else {
+
+              this.particles.push(new Missile({
+                x: this.x,
+                y: this.y,
+                targetX: context.renderContext ? context.keyContext.MouseX - context.renderContext.translatedX : 0,
+                targetY: context.renderContext ? context.keyContext.MouseY - context.renderContext.translatedY : 0,
+                speed: 40,
+                flipX: this.flipX,
+                colliderListForCheck: context.monsterContext.list,
+                critical: 0.2,
+              }));
+
+            }
 
           } else {
 
