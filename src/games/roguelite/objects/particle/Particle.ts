@@ -82,8 +82,8 @@ export class Particle extends ObjectBase {
     const deltaY = this.y - config.targetY;
 
     // 타겟을 화면 바깥으로 설정
-    const targetX = config.targetX + (window.innerWidth * 0.5 * (deltaX > 0 ? -1 : 1));
-    const targetY = config.targetY + (window.innerHeight * 0.5 * (deltaX > 0 ? -1 : 1) * (deltaY / deltaX));
+    const targetX = config.targetX + (window.innerWidth * (deltaX > 0 ? -1 : 1));
+    const targetY = config.targetY + (window.innerWidth * (deltaX > 0 ? -1 : 1) * (deltaY / deltaX));
 
     // action 생성 및 목표 설정
     this.actionMove = new ActionMove({
